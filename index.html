@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zahra - Hadiah Ulang Tahun dari Jay</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
+    <style>
+        /* CSS INJECTED TEMPORARY FOR PRE-LOAD */
+        body { background: #111; color: #fff; margin: 0; overflow-x: hidden; }
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="custom-cursor-core"></div>
+    <div id="custom-cursor-ring"></div>
+    <div id="noise-overlay"></div>
+
+    <!-- PIN SECURITY OVERLAY -->
+    <div id="pin-screen" class="app-screen active-screen z-maximum">
+        <div class="glass-panel pin-panel blur-intense dynamic-hover">
+            <h1 class="main-title text-glow">Masukkan PIN</h1>
+            <p class="sub-title">Akses memori virtual kita sayang.</p>
+            <div class="pin-inputs-wrapper">
+                <input type="password" maxlength="1" class="pin-box glass-input" readonly>
+                <input type="password" maxlength="1" class="pin-box glass-input" readonly>
+                <input type="password" maxlength="1" class="pin-box glass-input" readonly>
+                <input type="password" maxlength="1" class="pin-box glass-input" readonly>
+                <input type="password" maxlength="1" class="pin-box glass-input" readonly>
+                <input type="password" maxlength="1" class="pin-box glass-input" readonly>
+            </div>
+            <div class="keypad-matrix">
+                <button class="key-btn glass-btn" data-value="1">1</button>
+                <button class="key-btn glass-btn" data-value="2">2</button>
+                <button class="key-btn glass-btn" data-value="3">3</button>
+                <button class="key-btn glass-btn" data-value="4">4</button>
+                <button class="key-btn glass-btn" data-value="5">5</button>
+                <button class="key-btn glass-btn" data-value="6">6</button>
+                <button class="key-btn glass-btn" data-value="7">7</button>
+                <button class="key-btn glass-btn" data-value="8">8</button>
+                <button class="key-btn glass-btn" data-value="9">9</button>
+                <button class="key-btn glass-btn action-clear" data-action="clear">C</button>
+                <button class="key-btn glass-btn" data-value="0">0</button>
+                <button class="key-btn glass-btn action-enter" data-action="enter">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+            <div id="error-notification" class="error-banner opacity-zero">PIN salah sayang. Coba lagi ya.</div>
+        </div>
+    </div>
+
+    <!-- LOADING SCREEN -->
+    <div id="loading-screen" class="app-screen hidden">
+        <div class="loading-wrapper center-col">
+            <div class="premium-loader-ring"></div>
+            <h2 class="loading-header gradient-text">Membangun Semesta Untukmu...</h2>
+            <div class="progress-track glass-panel">
+                <div id="progress-fill" class="progress-bar"></div>
+            </div>
+            <span id="progress-percentage">0%</span>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <main id="main-application" class="opacity-zero">
+        
+        <!-- AUDIO PLAYER ISLAND -->
+        <div id="apple-audio-island" class="glass-capsule dynamic-island">
+            <div class="island-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            </div>
+            <div class="island-meta">
+                <span class="track-title">Merry Christmas, I Miss You</span>
+                <span class="track-artist">Zahra & Jay</span>
+            </div>
+            <div class="audio-visualizer">
+                <span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span>
+            </div>
+            <audio id="master-audio" loop>
+                <source src="assets/audio/lagu-kamu.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <!-- REALTIME CLOCK -->
+        <div id="global-clock-widget" class="glass-capsule floating-left-widget">
+            <div class="clock-item"><span class="digital-time" id="val-wib">--:--</span><span class="zone-label">WIB</span></div>
+            <div class="clock-item"><span class="digital-time" id="val-wita">--:--</span><span class="zone-label">WITA</span></div>
+            <div class="clock-item"><span class="digital-time" id="val-wit">--:--</span><span class="zone-label">WIT</span></div>
+            <div class="clock-item"><span class="digital-time" id="val-utc">--:--</span><span class="zone-label">UTC</span></div>
+        </div>
+
+        <!-- HERO SECTION -->
+        <section id="section-hero" class="app-section viewport-100 relative-layer">
+            <canvas id="fireworks-canvas" class="absolute-cover z-behind"></canvas>
+            <div class="hero-content center-col z-front">
+                <h1 class="hero-headline text-glow gsap-hero-reveal">Selamat Ulang Tahun,<br>Perempuanku.</h1>
+                <p class="hero-subline gsap-hero-reveal delay-2">09 Agustus 2012 — Awal mula hadirnya bintang paling terang.</p>
+                <div class="scroll-down-indicator">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3D CHARACTERS SECTION -->
+        <section id="section-characters" class="app-section viewport-100">
+            <div class="glass-panel container-xl dynamic-hover">
+                <h2 class="section-title text-glow">Penjaga Ruang Virtual Kita</h2>
+                <p class="section-desc">Karakter ini sengaja kubuat untuk selalu menemani layar hp-mu saat aku sedang tidak bisa membalas pesan.</p>
+                <div id="three-characters-viewport" class="viewport-3d-box"></div>
+            </div>
+        </section>
+
+        <!-- INTERACTIVE GREETING CARD -->
+        <section id="section-card" class="app-section viewport-100 center-flex">
+            <div class="envelope-wrapper" id="envelope-trigger">
+                <div class="flap top-flap"></div>
+                <div class="flap bottom-flap"></div>
+                <div class="flap left-flap"></div>
+                <div class="flap right-flap"></div>
+                <div class="letter-paper glass-panel">
+                    <h3 class="paper-title">Dari Pacarmu, Jay</h3>
+                    <p class="paper-snippet">Untuk Zahra kesayanganku. Aku menuliskan seluruh isi hatiku di bawah sana. Buka dan bacalah perlahan-lahan, khusus untukmu...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 30 PARAGRAPHS NARRATIVE (BOYFRIEND POV) -->
+        <section id="section-narrative" class="app-section relative-layer">
+            <div class="glass-panel container-narrative padding-massive dynamic-hover">
+                <p class="narrative-text gsap-scroll-reveal">Selamat ulang tahun, pacarku yang paling cantik, Zahra. Hari ini adalah hari di mana aku merasa sangat bersyukur kepada semesta, karena pada tanggal sembilan Agustus dua ribu dua belas, seorang perempuan luar biasa telah dilahirkan ke dunia ini.</p>
+                <p class="narrative-text gsap-scroll-reveal">Meskipun saat ini raga kita terpisahkan oleh jarak dan layar, percayalah bahwa seluruh hatiku, pikiranku, dan duniaku berpusat padamu di hari yang sangat istimewa ini.</p>
+                <p class="narrative-text gsap-scroll-reveal">Aku sangat ingin menjadikan hari ini sempurna untukmu, membuatmu tersenyum lebar hanya melalui pesan-pesan yang aku ketik dan kirimkan dari jauh.</p>
+                <p class="narrative-text gsap-scroll-reveal">Orang mungkin bilang hubungan virtual itu sulit, tapi bagiku, selama itu denganmu, layar ini adalah tempat paling nyaman dan ruang paling indah yang pernah aku miliki.</p>
+                <p class="narrative-text gsap-scroll-reveal">Tahukah kamu? Setiap kali nama kamu muncul di notifikasi hp-ku, ada perasaan hangat dan bahagia yang tidak akan pernah bisa dimengerti oleh orang lain.</p>
+                <p class="narrative-text gsap-scroll-reveal">Aku sangat bersyukur bisa memilikimu sebagai kekasihku, mendengarkan semua ceritamu lewat voice note, keluh kesahmu, dan segala hal kecil yang kamu bagikan setiap harinya kepadaku.</p>
+                <p class="narrative-text gsap-scroll-reveal">Cara kamu mengetik pesan, cara kamu ngambek di chat, dan cara kamu bercanda selalu berhasil membuatku merasa menjadi laki-laki paling beruntung karena bisa mengenalmu sedalam ini.</p>
+                <p class="narrative-text gsap-scroll-reveal">Aku sangat mengagumi betapa kuat dan hebatnya kamu sayang. Melewati hari-hari yang berat sendirian di sana, namun kamu tetap tegar dan selalu bisa memberikan energi positif untukku di sini.</p>
+                <p class="narrative-text gsap-scroll-reveal">Maafkan aku karena di hari ulang tahunmu ini, aku belum bisa memberikan hadiah secara fisik. Namun percayalah, hadiah digital ini aku buat dengan seluruh cinta dan usahaku hanya untuk merayakanmu.</p>
+                <p class="narrative-text gsap-scroll-reveal">Biar semua barisan kode yang membentuk website ini menjadi bukti bahwa jarak tidak akan pernah mengurangi besarnya rasa sayangku kepadamu.</p>
+                <p class="narrative-text gsap-scroll-reveal">Semoga di usiamu yang baru ini, perempuanku selalu diberikan kesehatan yang tiada habisnya, kebahagiaan yang melimpah, dan hati yang selalu damai setiap malam sebelum tidur.</p>
+                <p class="narrative-text gsap-scroll-reveal">Aku selalu mendoakan agar semua yang kamu impikan, semua cita-citamu, dan apa pun yang kamu targetkan bisa tercapai dengan proses yang paling indah.</p>
+                <p class="narrative-text gsap-scroll-reveal">Semoga hari-hari ke depan yang kamu lalui selalu diterangi oleh hal-hal baik, dipermudah segala urusannya, dan dijauhkan dari hal-hal yang membuatmu sedih.</p>
+                <p class="narrative-text gsap-scroll-reveal">Sayang, kalau kamu lagi merasa capek atau sedang menghadapi hari yang sangat menyebalkan, tolong ingat kalau kamu itu kekasihku, dan kamu tidak pernah sendirian.</p>
+                <p class="narrative-text gsap-scroll-reveal">Aku akan selalu online buat kamu. Aku selalu ada di balik layar ini untuk jadi pendengar pertamamu, tempat kamu bersandar secara virtual, dan support system terbesarmu.</p>
+                <p class="narrative-text gsap-scroll-reveal">Hubungan kita telah mengajariku banyak hal, terutama tentang bagaimana rasa percaya, kesabaran, dan komunikasi adalah fondasi terkuat yang bisa menembus batas jarak.</p>
+                <p class="narrative-text gsap-scroll-reveal">Aku selalu menyukai malam-malam panjang kita, di mana kita saling bertukar pesan sampai larut, menceritakan keseharian kita yang terasa begitu magis hanya karena aku melakukannya bersamamu.</p>
+                <p class="narrative-text gsap-scroll-reveal">Kamu itu perempuan yang sangat istimewa, Zahra. Kamu pintar, kamu lembut, dan caramu menyikapi dunia membuatku jatuh cinta berkali-kali setiap harinya.</p>
+                <p class="narrative-text gsap-scroll-reveal">Kadang aku suka senyum-senyum sendiri kalau lagi baca ulang chat history kita, karena aku sadar bahwa memiliki kamu di hidupku adalah hal terbaik yang pernah terjadi padaku.</p>
+                <p class="narrative-text gsap-scroll-reveal">Aku berdoa agar senyum manismu tidak akan pernah luntur, dan semoga di hari ulang tahunmu ini, kamu bisa merasakan pelukan hangatku yang aku kirimkan lewat doa.</p>
+                <p class="narrative-text gsap-scroll-reveal">Sebagai pacarmu, aku berjanji akan terus menjaga hubungan virtual kita ini agar selalu hangat, penuh kepercayaan, dan penuh dengan kata-kata yang saling menguatkan.</p>
+                <p class="narrative-text gsap-scroll-reveal">Terima kasih sayang, karena kamu sudah mau menerimaku, mau berjuang bersamaku, dan mau menjadikanku sebagai tempat kamu berbagi segalanya di dunia maya ini.</p>
+                <p class="narrative-text gsap-scroll-reveal">Aku berharap mentalmu selalu dikuatkan untuk melewati segala macam rintangan, dan kamu akan terus tumbuh menjadi versi Zahra yang jauh lebih hebat dari tahun lalu.</p>
+                <p class="narrative-text gsap-scroll-reveal">Jadikan website ulang tahun ini sebagai monumen kecil di layar hp-mu, bahwa ada seseorang bernama Jay yang sangat membanggakanmu dan menyayangimu dengan tulus.</p>
+                <p class="narrative-text gsap-scroll-reveal">Setiap malam sebelum tidur, aku tidak pernah lupa untuk meminta kepada Tuhan agar kebahagiaan selalu menyertai setiap hembusan napas kekasihku.</p>
+                <p class="narrative-text gsap-scroll-reveal">Semoga kita selalu diberi waktu untuk merayakan momen-momen kecil lewat layar, saling menyemangati lewat pesan suara, dan saling menjaga satu sama lain.</p>
+                <p class="narrative-text gsap-scroll-reveal">Teruslah bersinar, kesayanganku. Dunia ini beruntung memiliki manusia sebaik dirimu, dan aku lebih beruntung lagi karena memilikimu sebagai pacarku.</p>
+                <p class="narrative-text gsap-scroll-reveal">Jangan pernah insecure atau ragu sama diri kamu sendiri ya sayang. Di mataku, kamu itu sudah paling sempurna, dan kamu sangat amat pantas untuk dirayakan.</p>
+                <p class="narrative-text gsap-scroll-reveal">Tahun depan, tahun depannya lagi, dan selamanya, aku harap ikatan kita ini akan semakin kuat dan tidak akan pernah goyah oleh jarak sejauh apa pun.</p>
+                <p class="narrative-text gsap-scroll-reveal">Selamat bertambah usia, sayangku. Ini semua kudedikasikan khusus untukmu. Semoga hari ini dipenuhi notifikasi bahagia, dan semoga cintaku selalu sampai ke hatimu.</p>
+            </div>
+        </section>
+
+        <!-- STRICT 9:16 GALLERY -->
+        <section id="section-gallery" class="app-section viewport-100">
+            <h2 class="section-title text-center text-glow gsap-scroll-reveal">Memori Kita</h2>
+            <div class="gallery-grid">
+                <div class="media-box video-box gsap-scroll-reveal">
+                    <video src="assets/videos/video1.mp4" autoplay loop muted playsinline class="media-content"></video>
+                </div>
+                <div class="media-box image-box gsap-scroll-reveal delay-1">
+                    <img src="assets/images/foto1.jpg" alt="Zahra 1" class="media-content">
+                </div>
+                <div class="media-box video-box gsap-scroll-reveal delay-2">
+                    <video src="assets/videos/video2.mp4" autoplay loop muted playsinline class="media-content"></video>
+                </div>
+                <div class="media-box image-box gsap-scroll-reveal delay-3">
+                    <img src="assets/images/foto2.jpg" alt="Zahra 2" class="media-content">
+                </div>
+                <div class="media-box image-box gsap-scroll-reveal delay-1">
+                    <img src="assets/images/foto3.jpg" alt="Zahra 3" class="media-content">
+                </div>
+                <div class="media-box video-box gsap-scroll-reveal delay-2">
+                    <video src="assets/videos/video3.mp4" autoplay loop muted playsinline class="media-content"></video>
+                </div>
+                <div class="media-box image-box gsap-scroll-reveal delay-3">
+                    <img src="assets/images/foto4.jpg" alt="Zahra 4" class="media-content">
+                </div>
+                <div class="media-box video-box gsap-scroll-reveal delay-4">
+                    <video src="assets/videos/video4.mp4" autoplay loop muted playsinline class="media-content"></video>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3D CAKE SECTION -->
+        <section id="section-cake" class="app-section viewport-100">
+            <div class="glass-panel container-xl dynamic-hover">
+                <h2 class="section-title text-center text-glow">Tiup Lilinnya Sayang</h2>
+                <p class="section-desc text-center">Sentuh apinya ya cintaku. Aku udah siapin *magic* buat kamu.</p>
+                <div id="three-cake-viewport" class="viewport-3d-box"></div>
+            </div>
+        </section>
+
+        <!-- MAKE A WISH SECTION -->
+        <section id="section-wish" class="app-section viewport-100 center-col relative-layer">
+            <div class="glass-panel wish-container z-front dynamic-hover">
+                <h2 class="section-title text-glow">Harapan Cantikmu</h2>
+                <p class="section-desc">Ketik doa ulang tahun kamu di bawah, nanti otomatis jadi bintang yang terbang ke atas.</p>
+                <input type="text" id="wish-input" class="premium-input-box" placeholder="Ketik doamu di sini sayang...">
+                <button id="wish-btn" class="premium-button mt-x">Terbangkan Doa</button>
+            </div>
+            <canvas id="wish-particle-canvas" class="absolute-cover z-behind"></canvas>
+        </section>
+
+        <!-- ENDING & SECRET GIFT -->
+        <section id="section-ending" class="app-section viewport-100 center-col relative-layer">
+            <div class="heart-svg-box">
+                <svg viewBox="0 0 100 100" class="svg-heart-render">
+                    <path id="draw-heart-path" d="M 50 85 C 50 85, 20 60, 20 35 C 20 20, 35 15, 50 30 C 65 15, 80 20, 80 35 C 80 60, 50 85, 50 85 Z" fill="none" stroke="#ff4d6d" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <div id="secret-gift-trigger" class="glass-panel gift-pulse-container hidden">
+                <div class="gift-icon-svg">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+                </div>
+                <button id="btn-open-gift" class="premium-button ghost-btn mt-x">Buka Hadiah</button>
+            </div>
+
+            <div id="final-gift-reveal" class="glass-panel container-xl hidden opacity-zero">
+                <div class="image-box-16-9">
+                    <img src="assets/images/hadiah-akhir.jpg" alt="Kejutan Untuk Zahra" class="media-content">
+                </div>
+                <p class="final-message-caption">"HAYYIEE CINTAAA, ini hadiah buat kamu! hadiah ini mungkin kecil dan tidak seberapa, tetapi aku benar benar ingin merayakan hari ulang tahunmu dengan sepenuh hati. Selamat bertambah usia ya, cintaku. Semoga hari ini dipenuhi kebahagiaan, doa doa baik, dan senyum yang tidak pernah hilang. yuk, ambil hadiahnyaa!"</p>
+                <div class="center-flex">
+                    <a href="https://wa.me/6283815954022?text=AKU%20MAU%20SAYANGGG%20%3A3" target="_blank" class="premium-button solid-black">Ambil Hadiah</a>
+                </div>
+                <div class="center-flex mt-x">
+                    <button id="btn-back-top" class="text-underline-btn">Kembali ke Atas Sayang</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PURE VECTOR DECORATION DOM -->
+    <div id="vector-layer-root" class="absolute-cover pointer-events-none z-behind"></div>
+
+    <!-- APPLE DOCK -->
+    <nav id="apple-dock" class="glass-capsule fixed-bottom-dock hidden">
+        <ul class="dock-list">
+            <li class="dock-icon active" data-target="#section-hero">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+            </li>
+            <li class="dock-icon" data-target="#section-characters">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+            </li>
+            <li class="dock-icon" data-target="#section-narrative">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </li>
+            <li class="dock-icon" data-target="#section-gallery">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            </li>
+            <li class="dock-icon" data-target="#section-cake">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- HEAVY DEPENDENCIES -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
