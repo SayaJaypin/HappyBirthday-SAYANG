@@ -19,7 +19,7 @@
 </head>
 <body>
     <!-- SVG Filters for Advanced Glassmorphism and Gooey Effects -->
-    <svg style="display: none;" xmlns="http://www.w3.org/2000/svg">
+    <svg style="display: none; position: absolute; pointer-events: none; z-index: -9999;" xmlns="http://www.w3.org/2000/svg">
         <defs>
             <filter id="goo">
                 <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
@@ -45,9 +45,9 @@
     <div id="css-decor-layer" class="parallax-layer"></div>
 
     <!-- Audio Engine Container -->
-    <div id="audio-engine-wrapper">
+    <div id="audio-engine-wrapper" style="display: none; pointer-events: none;">
         <audio id="bg-music" loop preload="auto">
-            <!-- PATH AUDIO DIUPDATE -->
+            <!-- PATH AUDIO -->
             <source src="assets/audio/lagu.mp3" type="audio/mpeg">
         </audio>
     </div>
@@ -78,7 +78,7 @@
         <!-- SCREEN 1: SECURITY PIN -->
         <section id="screen-pin" class="screen-layer active-screen" data-index="0">
             <div class="screen-content-wrapper">
-                <div class="glass-panel pin-auth-panel reveal-anim">
+                <div class="glass-panel pin-auth-panel reveal-anim interactable-layer">
                     <div class="auth-header">
                         <div class="lock-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -102,7 +102,7 @@
         <!-- SCREEN 2: HEAVY LOADING SEQUENCE -->
         <section id="screen-loading" class="screen-layer" data-index="1">
             <div class="screen-content-wrapper">
-                <div class="loading-orchestrator">
+                <div class="loading-orchestrator interactable-layer">
                     <div class="spinner-premium">
                         <svg viewBox="0 0 100 100">
                             <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,105,180,0.2)" stroke-width="4"></circle>
@@ -122,7 +122,7 @@
         <!-- SCREEN 3: HOME DASHBOARD -->
         <section id="screen-home" class="screen-layer" data-index="2">
             <div class="screen-content-wrapper flex-top">
-                <div class="greeting-hero glass-panel parallax-el">
+                <div class="greeting-hero glass-panel parallax-el interactable-layer">
                     <div class="badge-premium">09 Agustus 2012</div>
                     <h1 class="heading-hero text-gradient-pink">Selamat Ulang Tahun,<br><span class="name-highlight">Zahra</span></h1>
                     <p class="text-body-large">Hari ini semesta tersenyum lebih lebar karena merayakan hari kelahiranmu. Sebuah kebanggaan bisa mengenal dan menemanimu.</p>
@@ -151,11 +151,10 @@
 
         <!-- SCREEN 4: IMMERSIVE MEDIA GALLERY -->
         <section id="screen-media" class="screen-layer" data-index="3">
-            <div class="masonry-gallery-wrapper">
+            <div class="masonry-gallery-wrapper interactable-layer">
                 <div class="gallery-header glass-panel-small">
                     <h2 class="heading-secondary">Kenangan Virtual Kita</h2>
                 </div>
-                <!-- PATH VIDEOS DAN IMAGES DIUPDATE -->
                 <div class="media-grid-premium" id="media-grid-container">
                     <div class="media-card" style="--delay: 0.1s">
                         <div class="media-inner"><video src="assets/videos/video1.mp4" autoplay loop muted playsinline class="media-object"></video></div>
@@ -187,7 +186,7 @@
 
         <!-- SCREEN 5: ENDLESS ROMANTIC SCROLL -->
         <section id="screen-messages" class="screen-layer" data-index="4">
-            <div class="screen-content-wrapper">
+            <div class="screen-content-wrapper interactable-layer">
                 <div class="message-envelope-container" id="envelope-wrapper">
                     <div class="premium-envelope">
                         <div class="envelope-flap"></div>
@@ -218,7 +217,7 @@
 
         <!-- SCREEN 6: WISH & PARTICLE ENGINE -->
         <section id="screen-wish" class="screen-layer" data-index="5">
-            <div class="screen-content-wrapper">
+            <div class="screen-content-wrapper interactable-layer">
                 <div class="glass-panel wish-panel">
                     <h2 class="heading-secondary">Terbangkan Harapan</h2>
                     <p class="text-body">Ketik doa dan harapanmu di sini. Saat kau mengirimkannya, sistem akan mengubah teksmu menjadi rasi bintang yang terbang ke langit virtual kita.</p>
@@ -238,7 +237,7 @@
 
         <!-- SCREEN 7: THE SECRET REVEAL -->
         <section id="screen-secret" class="screen-layer" data-index="6">
-            <div class="screen-content-wrapper flex-center full-height">
+            <div class="screen-content-wrapper flex-center full-height interactable-layer">
                 <!-- Tahap 1: Garis Love Drawing -->
                 <div class="svg-drawing-container" id="love-drawing-container">
                     <svg class="giant-love-svg" viewBox="0 0 200 200">
@@ -268,7 +267,6 @@
                 <!-- Tahap 3: Hadiah Utama -->
                 <div class="ultimate-gift-container glass-panel hidden" id="ultimate-gift-container">
                     <div class="gift-image-frame">
-                        <!-- PATH HADIAH AKHIR DIUPDATE -->
                         <img src="assets/images/hadiah-akhir.jpg" alt="Hadiah Spesial 16:9" class="gift-img-169">
                         <div class="frame-shine"></div>
                     </div>

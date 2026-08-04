@@ -1,6 +1,6 @@
 /**
  * ==============================================================================
- * ENTERPRISE VIRTUAL BIRTHDAY ENGINE (v3.0.0 Premium Apple-Grade)
+ * ENTERPRISE VIRTUAL BIRTHDAY ENGINE (v4.0.0 Premium Apple-Grade)
  * Architecture: ES6 Class Modules (UIManager, AudioEngine, ParticleSystem, ThreeJSEngine)
  * ==============================================================================
  */
@@ -195,6 +195,7 @@ class ThreeJSEngine {
         document.addEventListener('touchmove', (e) => this.onPointerMove(e.touches[0].clientX, e.touches[0].clientY), {passive:true});
         
         this.animate = this.animate.bind(this);
+        this.isActive = true; // Control flag for rendering
         this.animate();
     }
     setupLighting() {
@@ -392,6 +393,8 @@ class ThreeJSEngine {
     
     animate() {
         requestAnimationFrame(this.animate);
+        if(!this.isActive) return; // Pause rendering if not on home screen
+        
         const t = this.clock.getElapsedTime();
         
         // Animasi bernapas (breathing)
@@ -454,7 +457,9 @@ class UIManager {
     }
     
     switchScreen(targetId) {
-        this.screens.forEach(s => s.classList.remove('active-screen'));
+        this.screens.forEach(s => {
+            s.classList.remove('active-screen');
+        });
         document.getElementById(targetId).classList.add('active-screen');
         
         this.dockItems.forEach(i => {
@@ -464,6 +469,11 @@ class UIManager {
         
         audio.playNavClick();
         
+        // Manage ThreeJS Rendering State
+        if(threeEngine) {
+            threeEngine.isActive = (targetId === 'screen-home');
+        }
+
         // Trigger specific logic
         if(targetId === 'screen-home') {
             if(!threeEngine) threeEngine = new ThreeJSEngine();
@@ -503,10 +513,15 @@ class UIManager {
                 btn.innerHTML = `${k.n}<span class="letters">${k.l}</span>`;
             }
             
-            btn.addEventListener('click', () => {
+            // Use pointerdown for immediate response on mobile
+            btn.addEventListener('pointerdown', (e) => {
+                e.preventDefault(); // Prevent double firing
                 if(k.empty) return;
+                
+                // Visual feedback
                 btn.style.transform = 'scale(0.85)';
                 setTimeout(()=> btn.style.transform = 'none', 100);
+                
                 this.handlePin(k.action ? 'clear' : k.n);
             });
             container.appendChild(btn);
@@ -721,7 +736,6 @@ class UIManager {
     
     injectCSSDecorations() {
         const layer = document.getElementById('css-decor-layer');
-        // Penggantian Emoji menjadi Tipografi Elegan / Premium Symbols
         const shapes = ['✦', '★', '♦', '●', '✧', '⋆'];
         for(let i=0; i<60; i++) { // Massive amount of passive decor
             const span = document.createElement('span');
@@ -739,6 +753,18 @@ class UIManager {
 }
 
 // Start The Engine on Load
-window.onload = () => {
+// Ensure DOM is fully loaded before initializing to prevent button issues
+document.addEventListener('DOMContentLoaded', () => {
     window.App = new UIManager();
-};
+});
+"""
+
+import os
+os.makedirs("Ulang-Tahun-Zahra", exist_ok=True)
+with open("Ulang-Tahun-Zahra/index.html", "w") as f:
+    f.write(generate_premium_html())
+with open("Ulang-Tahun-Zahra/style.css", "w") as f:
+    f.write(generate_premium_css())
+with open("Ulang-Tahun-Zahra/script.js", "w") as f:
+    f.write(generate_premium_js())
+print("Files Generated in Ulang-Tahun-Zahra directory")
