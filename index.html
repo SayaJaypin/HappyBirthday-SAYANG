@@ -1,230 +1,333 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#FFD1DC">
-    <title>Untuk Zahra - Premium Virtual Birthday</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0" />
+<title>Untuk Zahra, Selamanya Disayang</title>
+<meta name="description" content="Sebuah persembahan ulang tahun untuk Zahra, dari Jay." />
+<link rel="icon" href="favicon.ico" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,450;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Poppins:wght@300;400;500;600;700&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <!-- Latar Belakang & 3D -->
-    <canvas id="bg-canvas-particles"></canvas> 
-    <canvas id="three-canvas"></canvas> 
 
-    <!-- Mesin Audio -->
-    <div id="audio-engine-wrapper" style="display: none;">
-        <audio id="bg-music" loop preload="auto">
-            <source src="assets/audio/lagu.mp3" type="audio/mpeg">
-        </audio>
+<!-- ================= PIN SCREEN ================= -->
+<section id="pin-screen" class="screen pin-screen">
+  <canvas id="pin-bg-canvas"></canvas>
+  <div class="pin-content">
+    <p class="pin-eyebrow">Sebuah ruang privat, untuk berdua</p>
+    <h1 class="pin-title">Untuk Zahra</h1>
+    <p class="pin-sub">Masukkan kode yang hanya kita berdua tahu</p>
+
+    <div class="pin-dots" id="pin-dots" aria-hidden="true">
+      <span class="pin-dot"></span>
+      <span class="pin-dot"></span>
+      <span class="pin-dot"></span>
+      <span class="pin-dot"></span>
+      <span class="pin-dot"></span>
+      <span class="pin-dot"></span>
     </div>
 
-    <!-- Pemutar Musik -->
-    <div class="dynamic-island-music glass-fx" id="music-island">
-        <div class="island-left">
-            <div class="eq-bars is-paused" id="music-eq">
-                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-            </div>
+    <p class="pin-error" id="pin-error">Kodenya belum tepat, coba lagi ya sayang</p>
+
+    <div class="pin-keypad" id="pin-keypad">
+      <button class="pin-key" data-key="1">1</button>
+      <button class="pin-key" data-key="2">2</button>
+      <button class="pin-key" data-key="3">3</button>
+      <button class="pin-key" data-key="4">4</button>
+      <button class="pin-key" data-key="5">5</button>
+      <button class="pin-key" data-key="6">6</button>
+      <button class="pin-key" data-key="7">7</button>
+      <button class="pin-key" data-key="8">8</button>
+      <button class="pin-key" data-key="9">9</button>
+      <div class="pin-key pin-key-ghost"></div>
+      <button class="pin-key" data-key="0">0</button>
+      <button class="pin-key pin-key-del" id="pin-delete" aria-label="Hapus">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Z"/><path d="M14 10l-4 4M10 10l4 4"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LOADING SCREEN ================= -->
+<section id="loading-screen" class="screen loading-screen hidden">
+  <canvas id="loading-bg-canvas"></canvas>
+  <div class="loading-content">
+    <div class="loading-mascots">
+      <div class="mascot-slot" id="mascot-cat-slot"></div>
+      <div class="mascot-slot" id="mascot-rabbit-slot"></div>
+    </div>
+    <p class="loading-label">Menyiapkan kejutan kecil untukmu</p>
+    <div class="loading-bar-track">
+      <div class="loading-bar-fill" id="loading-bar-fill"></div>
+    </div>
+    <p class="loading-percent" id="loading-percent">0%</p>
+  </div>
+</section>
+
+<!-- ================= MAIN APP ================= -->
+<div id="app" class="app hidden">
+
+  <canvas id="global-particles" class="global-particles"></canvas>
+
+  <!-- Floating Music Player -->
+  <div class="music-player" id="music-player">
+    <button class="music-toggle" id="music-toggle" aria-label="Putar musik">
+      <div class="music-art">
+        <svg class="vinyl" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="19" fill="url(#vinylGrad)" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/>
+          <circle cx="20" cy="20" r="6" fill="#1a0f2e"/>
+          <circle cx="20" cy="20" r="1.6" fill="#f5c77e"/>
+          <defs>
+            <radialGradient id="vinylGrad">
+              <stop offset="0%" stop-color="#3a2154"/>
+              <stop offset="100%" stop-color="#160c24"/>
+            </radialGradient>
+          </defs>
+        </svg>
+      </div>
+      <svg class="play-icon" id="play-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <svg class="pause-icon hidden" id="pause-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+    </button>
+    <div class="music-panel" id="music-panel">
+      <p class="music-title">Merry Christmas, I Miss You</p>
+      <div class="music-wave" id="music-wave"></div>
+      <div class="music-progress-track" id="music-progress-track">
+        <div class="music-progress-fill" id="music-progress-fill"></div>
+        <div class="music-progress-handle" id="music-progress-handle"></div>
+      </div>
+      <div class="music-controls-row">
+        <span class="music-time" id="music-current-time">0:00</span>
+        <input type="range" id="music-volume" class="music-volume" min="0" max="1" step="0.01" value="0.7" aria-label="Volume" />
+        <span class="music-time" id="music-duration">0:00</span>
+      </div>
+    </div>
+  </div>
+  <audio id="bg-audio" src="assets/audio/merry-christmas-i-miss-you.mp3" preload="auto" loop></audio>
+
+  <!-- Realtime Clock chip -->
+  <div class="clock-chip" id="clock-chip">
+    <button class="clock-chip-btn" id="clock-chip-btn">
+      <span id="clock-primary">--:--</span>
+      <span class="clock-chip-zone">WIB</span>
+    </button>
+    <div class="clock-panel" id="clock-panel">
+      <div class="clock-row"><span>WIB</span><span id="clock-wib">--:--:--</span></div>
+      <div class="clock-row"><span>WITA</span><span id="clock-wita">--:--:--</span></div>
+      <div class="clock-row"><span>WIT</span><span id="clock-wit">--:--:--</span></div>
+      <div class="clock-row"><span>UTC</span><span id="clock-utc">--:--:--</span></div>
+      <div class="clock-divider"></div>
+      <div class="clock-date" id="clock-date">Hari, 00 Bulan 0000</div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 1: HERO ============ -->
+  <section id="section-hero" class="app-section hero-section">
+    <canvas id="hero-canvas" class="hero-canvas"></canvas>
+    <div class="firework-canvas-wrap"><canvas id="firework-canvas"></canvas></div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow reveal-text">09 Agustus &mdash; Hari Istimewa</p>
+      <h1 class="hero-title">
+        <span class="reveal-line" data-line="0">Selamat</span>
+        <span class="reveal-line" data-line="1">Ulang Tahun,</span>
+        <span class="reveal-line hero-name" data-line="2">Zahra.</span>
+      </h1>
+      <p class="hero-sub reveal-text">Dari layar ke layar, sinyal ke sinyal, hatiku selalu sampai padamu. Selamat bertambah usia, sayangku.</p>
+
+      <div class="countdown-card reveal-text" id="countdown-card">
+        <p class="countdown-label" id="countdown-label">Menghitung menuju hari spesialmu</p>
+        <div class="countdown-grid" id="countdown-grid">
+          <div class="countdown-unit"><span class="countdown-num" id="cd-days">00</span><span class="countdown-unit-label">Hari</span></div>
+          <div class="countdown-unit"><span class="countdown-num" id="cd-hours">00</span><span class="countdown-unit-label">Jam</span></div>
+          <div class="countdown-unit"><span class="countdown-num" id="cd-mins">00</span><span class="countdown-unit-label">Menit</span></div>
+          <div class="countdown-unit"><span class="countdown-num" id="cd-secs">00</span><span class="countdown-unit-label">Detik</span></div>
         </div>
-        <div class="island-center">
-            <h4 class="track-title">Merry Christmas, I Miss You</h4>
-            <p class="track-artist">Zahra & Jay</p>
-        </div>
-        <div class="island-right">
-            <button id="toggle-music-btn" class="icon-btn">
-                <svg viewBox="0 0 24 24" fill="currentColor" id="music-icon-svg">
-                    <path d="M8 5v14l11-7z"/>
-                </svg>
-            </button>
-        </div>
-        <div class="island-progress-wrapper">
-            <div class="island-progress-fill" id="music-progress"></div>
-        </div>
+      </div>
+
+      <button class="scroll-hint" id="scroll-hint">
+        <span>Gulir untuk membaca suratku</span>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 2: STORY ============ -->
+  <section id="section-story" class="app-section story-section">
+    <div class="section-heading">
+      <p class="section-eyebrow">Sepucuk Rasa</p>
+      <h2 class="section-title">Cerita Kita, dari Jarak yang Tak Pernah Terasa Jauh</h2>
+    </div>
+    <div class="story-scroller" id="story-scroller">
+      <!-- story paragraphs injected by JS -->
+    </div>
+  </section>
+
+  <!-- ============ SECTION 3: GREETING CARD ============ -->
+  <section id="section-card" class="app-section card-section">
+    <div class="section-heading">
+      <p class="section-eyebrow">Kartu Untukmu</p>
+      <h2 class="section-title">Sebuah Kartu Kecil, Isinya Sepenuh Hati</h2>
+      <p class="section-desc">Ketuk amplopnya, bacalah pelan&#8209;pelan.</p>
     </div>
 
-    <main id="app-container">
-        <!-- SCREEN 1: PIN -->
-        <section id="screen-pin" class="screen-layer active-screen" data-target="pin">
-            <div class="screen-content-wrapper">
-                <div class="glass-panel pin-auth-panel">
-                    <div class="auth-header">
-                        <div class="lock-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        </div>
-                        <h1 class="heading-primary">Verifikasi Hati</h1>
-                        <p class="text-subtitle">Masukkan tanggal istimewa kita untuk membuka keajaiban.</p>
-                    </div>
-                    <div class="pin-indicator-group" id="pin-indicators">
-                        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-                        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-                    </div>
-                    <div class="premium-keypad" id="numpad-container">
-                        <!-- Keypad dibuat oleh JS -->
-                    </div>
-                </div>
-            </div>
-        </section>
+    <div class="greeting-card-wrap">
+      <div class="envelope" id="envelope">
+        <div class="envelope-shadow"></div>
+        <div class="envelope-back"></div>
+        <div class="card-paper" id="card-paper">
+          <p class="card-to">Untuk Zahra,</p>
+          <p class="card-body">Di setiap notifikasi yang masuk, aku selalu berharap itu darimu. Terima kasih sudah bertahan bersamaku, di dalam jarak yang kadang tak ramah. Hari ini giliranku merayakanmu sepenuh yang aku bisa, lewat layar, lewat kata, lewat doa yang tak pernah putus. Selamat ulang tahun, sayang. Aku menyayangimu, dari sini, hari ini, dan nanti.</p>
+          <p class="card-from">&mdash; Jay, yang selalu menunggu balasanmu</p>
+        </div>
+        <div class="envelope-flap"></div>
+        <div class="envelope-front"></div>
+      </div>
+      <p class="envelope-hint" id="envelope-hint">Ketuk untuk membuka</p>
+    </div>
+  </section>
 
-        <!-- SCREEN 2: LOADING -->
-        <section id="screen-loading" class="screen-layer" data-target="loading">
-            <div class="screen-content-wrapper">
-                <div class="loading-orchestrator">
-                    <div class="spinner-premium">
-                        <svg viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,105,180,0.2)" stroke-width="4"></circle>
-                            <circle cx="50" cy="50" r="45" fill="none" stroke="#FF69B4" stroke-width="4" stroke-dasharray="283" stroke-dashoffset="283" class="spinner-progress-circle"></circle>
-                        </svg>
-                        <div class="spinner-center-icon">✦</div>
-                    </div>
-                    <h2 class="loading-status-text" id="loading-status">Merangkai Bintang...</h2>
-                    <div class="loading-bar-track">
-                        <div class="loading-bar-fill" id="loading-fill-element"></div>
-                    </div>
-                    <p class="loading-percentage" id="loading-pct">0%</p>
-                </div>
-            </div>
-        </section>
+  <!-- ============ SECTION 4: 3D CAKE ============ -->
+  <section id="section-cake" class="app-section cake-section">
+    <div class="section-heading">
+      <p class="section-eyebrow">Satu Permintaan, Satu Tiupan</p>
+      <h2 class="section-title">Kuenya Sudah Siap</h2>
+      <p class="section-desc" id="cake-instruction">Ketuk lilinnya untuk meniupnya, lalu buat satu harapan.</p>
+    </div>
+    <div class="cake-canvas-wrap">
+      <canvas id="cake-canvas"></canvas>
+      <div class="cake-tap-target" id="cake-tap-target" aria-label="Tiup lilin"></div>
+    </div>
+  </section>
 
-        <!-- SCREEN 3: HOME -->
-        <section id="screen-home" class="screen-layer" data-target="home">
-            <div class="screen-content-wrapper">
-                <div class="greeting-hero glass-panel">
-                    <div class="badge-premium">09 Agustus 2012</div>
-                    <h1 class="heading-hero text-gradient-pink">Selamat Ulang Tahun,<br><span class="name-highlight">Zahra</span></h1>
-                    <p class="text-body-large">Hari ini semesta tersenyum lebih lebar karena merayakan hari kelahiranmu. Sebuah kebanggaan bisa mengenal dan menemanimu.</p>
-                    
-                    <div class="clock-widget neomorphic-inset">
-                        <div class="clock-header">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                            <span id="live-date-display">Sinkronisasi Waktu...</span>
-                        </div>
-                        <div class="world-clocks">
-                            <div class="clock-item"><span class="tz-label">WIB</span><span class="tz-time" id="tz-wib">--:--</span></div>
-                            <div class="clock-item"><span class="tz-label">WITA</span><span class="tz-time" id="tz-wita">--:--</span></div>
-                            <div class="clock-item"><span class="tz-label">WIT</span><span class="tz-time" id="tz-wit">--:--</span></div>
-                            <div class="clock-item"><span class="tz-label">UTC</span><span class="tz-time" id="tz-utc">--:--</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="interaction-hint" id="hint-3d">
-                    <span>✦ Sentuh Kucing & Kelinci ✦</span>
-                </div>
-            </div>
-        </section>
+  <!-- ============ SECTION 5: GALLERY ============ -->
+  <section id="section-gallery" class="app-section gallery-section">
+    <div class="section-heading">
+      <p class="section-eyebrow">Momen</p>
+      <h2 class="section-title">Kepingan yang Kau Kirim Padaku</h2>
+      <p class="section-desc">Geser untuk melihat semuanya.</p>
+    </div>
+    <div class="gallery-scroller" id="gallery-scroller">
+      <div class="gallery-item" data-index="0">
+        <video class="gallery-media" playsinline muted loop preload="metadata" data-src="assets/videos/video1.mp4"></video>
+        <button class="gallery-play" aria-label="Putar video"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+      </div>
+      <div class="gallery-item" data-index="1">
+        <img class="gallery-media" loading="lazy" data-src="assets/images/photo1.jpg" alt="Kenangan bersama Zahra" />
+      </div>
+      <div class="gallery-item" data-index="2">
+        <video class="gallery-media" playsinline muted loop preload="metadata" data-src="assets/videos/video2.mp4"></video>
+        <button class="gallery-play" aria-label="Putar video"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+      </div>
+      <div class="gallery-item" data-index="3">
+        <img class="gallery-media" loading="lazy" data-src="assets/images/photo2.jpg" alt="Kenangan bersama Zahra" />
+      </div>
+      <div class="gallery-item" data-index="4">
+        <video class="gallery-media" playsinline muted loop preload="metadata" data-src="assets/videos/video3.mp4"></video>
+        <button class="gallery-play" aria-label="Putar video"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+      </div>
+      <div class="gallery-item" data-index="5">
+        <img class="gallery-media" loading="lazy" data-src="assets/images/photo3.jpg" alt="Kenangan bersama Zahra" />
+      </div>
+      <div class="gallery-item" data-index="6">
+        <video class="gallery-media" playsinline muted loop preload="metadata" data-src="assets/videos/video4.mp4"></video>
+        <button class="gallery-play" aria-label="Putar video"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+      </div>
+      <div class="gallery-item" data-index="7">
+        <img class="gallery-media" loading="lazy" data-src="assets/images/photo4.jpg" alt="Kenangan bersama Zahra" />
+      </div>
+    </div>
+    <div class="gallery-dots" id="gallery-dots"></div>
+  </section>
 
-        <!-- SCREEN 4: MEDIA -->
-        <section id="screen-media" class="screen-layer" data-target="media">
-            <div class="screen-content-wrapper">
-                <div class="gallery-header glass-panel-small">
-                    <h2 class="heading-secondary">Kenangan Virtual Kita</h2>
-                </div>
-                <div class="media-grid-premium" id="media-grid-container">
-                    <div class="media-card"><video src="assets/videos/video1.mp4" autoplay loop muted playsinline class="media-object"></video></div>
-                    <div class="media-card"><img src="assets/images/foto1.jpg" alt="Memori 1" class="media-object"></div>
-                    <div class="media-card"><video src="assets/videos/video2.mp4" autoplay loop muted playsinline class="media-object"></video></div>
-                    <div class="media-card"><img src="assets/images/foto2.jpg" alt="Memori 2" class="media-object"></div>
-                    <div class="media-card"><video src="assets/videos/video3.mp4" autoplay loop muted playsinline class="media-object"></video></div>
-                    <div class="media-card"><img src="assets/images/foto3.jpg" alt="Memori 3" class="media-object"></div>
-                    <div class="media-card"><video src="assets/videos/video4.mp4" autoplay loop muted playsinline class="media-object"></video></div>
-                    <div class="media-card"><img src="assets/images/foto4.jpg" alt="Memori 4" class="media-object"></div>
-                </div>
-            </div>
-        </section>
+  <!-- ============ SECTION 6: MAKE A WISH ============ -->
+  <section id="section-wish" class="app-section wish-section">
+    <canvas id="wish-canvas"></canvas>
+    <div class="section-heading">
+      <p class="section-eyebrow">Make a Wish</p>
+      <h2 class="section-title">Tuliskan Satu Harapan Diam-Diam</h2>
+      <p class="section-desc">Aku tidak akan membacanya, biar itu jadi rahasiamu dengan langit.</p>
+    </div>
+    <div class="wish-box">
+      <textarea id="wish-input" class="wish-input" maxlength="140" placeholder="Tulis harapanmu di sini..."></textarea>
+      <button class="wish-button" id="wish-button">
+        <span>Lepaskan ke Langit</span>
+      </button>
+    </div>
+    <p class="wish-result hidden" id="wish-result">Semoga seluruh harapan terbaikmu menjadi kenyataan.</p>
+  </section>
 
-        <!-- SCREEN 5: MESSAGES -->
-        <section id="screen-messages" class="screen-layer" data-target="messages">
-            <div class="screen-content-wrapper">
-                <div class="message-envelope-container" id="envelope-wrapper">
-                    <div class="premium-envelope">
-                        <div class="envelope-flap"></div>
-                        <div class="envelope-body">
-                            <div class="envelope-wax-seal">Z & J</div>
-                        </div>
-                        <button id="open-letter-btn" class="btn-primary glow-effect">Buka Surat Hati</button>
-                    </div>
-                </div>
-                
-                <div class="letter-content-wrapper hidden" id="letter-content">
-                    <div class="glass-panel letter-panel">
-                        <div class="letter-header">
-                            <h2 class="heading-secondary">Pesan Dari Jauh</h2>
-                        </div>
-                        <div class="letter-scroll-area" id="romantic-quotes-container"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
+  <!-- ============ SECTION 7: CLOSING ============ -->
+  <section id="section-closing" class="app-section closing-section">
+    <div class="section-heading">
+      <p class="section-eyebrow">Penutup</p>
+      <h2 class="section-title">Satu Bentuk, untuk Satu Perasaan</h2>
+    </div>
 
-        <!-- SCREEN 6: WISH -->
-        <section id="screen-wish" class="screen-layer" data-target="wish">
-            <div class="screen-content-wrapper">
-                <div class="glass-panel wish-panel">
-                    <h2 class="heading-secondary">Terbangkan Harapan</h2>
-                    <p class="text-body">Ketik doa dan harapanmu di sini. Saat kau mengirimkannya, sistem akan mengubah teksmu menjadi rasi bintang yang indah.</p>
-                    
-                    <div class="input-group-premium">
-                        <textarea id="wish-input" class="premium-textarea" placeholder="Aku berharap di usia ini..." rows="4"></textarea>
-                    </div>
-                    
-                    <button id="send-wish-btn" class="btn-primary full-width">
-                        <span class="btn-text">Kirim ke Semesta</span>
-                    </button>
-                </div>
-            </div>
-        </section>
+    <div class="love-draw-wrap">
+      <svg id="love-svg" viewBox="0 0 400 200" class="love-svg">
+        <path id="love-path" d="M60,70 C60,30 110,30 110,70 C110,110 60,140 100,170 C140,140 90,110 90,70 C90,30 140,30 140,70"
+          fill="none" stroke="#ff5a8c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
 
-        <!-- SCREEN 7: SECRET -->
-        <section id="screen-secret" class="screen-layer" data-target="secret">
-            <div class="screen-content-wrapper">
-                <div class="secret-box-wrapper" id="secret-box-wrapper">
-                    <div class="magic-box-3d" id="magic-box-btn">
-                        <div class="box-lid"></div>
-                        <div class="box-body"></div>
-                        <span class="box-label">Sentuh Untuk Membuka</span>
-                    </div>
-                </div>
+    <div class="secret-gift-wrap hidden" id="secret-gift-wrap">
+      <button class="secret-gift-box" id="secret-gift-box">
+        <svg viewBox="0 0 64 64" width="46" height="46" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="8" y="26" width="48" height="30" rx="2"/>
+          <path d="M8 36h48"/>
+          <path d="M32 26v30"/>
+          <path d="M32 26c-6-14-24-10-20 0 3 7 20 0 20 0Z"/>
+          <path d="M32 26c6-14 24-10 20 0-3 7-20 0-20 0Z"/>
+        </svg>
+        <span>Buka Kotak Rahasia</span>
+      </button>
+    </div>
 
-                <div class="ultimate-gift-container glass-panel hidden" id="ultimate-gift-container">
-                    <div class="gift-image-frame">
-                        <img src="assets/images/hadiah-akhir.jpg" alt="Hadiah Spesial" class="gift-img-169">
-                    </div>
-                    <div class="gift-text-area">
-                        <p class="exact-caption">"HAYYIEE CINTAAA, ini hadiah buat kamu! hadiah ini mungkin kecil dan ngga seberapa, tapi aku bener bener merayakan sekali ulang tahun kamu. selamat bertambah umur yaa cintaa, YUKKK, ambil hadiah nyaa!"</p>
-                    </div>
-                    <a href="https://wa.me/6283815954022?text=AKU%20MAU%20SAYANGGG%20%3A3" target="_blank" class="btn-whatsapp glow-effect">Ambil Hadiah</a>
-                    <button id="reset-journey-btn" class="btn-text-only mt-4">Kembali ke Awal</button>
-                </div>
-            </div>
-        </section>
-    </main>
+    <div class="final-gift hidden" id="final-gift">
+      <div class="final-gift-frame">
+        <img src="assets/images/hadiah-akhir.jpg" alt="Hadiah untuk Zahra" class="final-gift-image" />
+      </div>
+      <p class="final-gift-caption">HAYYIEE CINTAAA, ini hadiah buat kamu! Hadiah ini mungkin kecil dan tidak seberapa, tetapi aku benar-benar merayakan ulang tahunmu dengan sepenuh hati. Selamat bertambah usia ya, cinta. Semoga setiap langkahmu dipenuhi kebahagiaan, kesehatan, keberuntungan, dan doa-doa terbaik. Yuk, ambil hadiahnya.</p>
+      <a class="final-gift-button" id="final-gift-button" href="https://wa.me/6283815954022?text=AKU%20MAU%20SAYANGGG%20%3A3" target="_blank" rel="noopener">
+        <span>Ambil Hadiah</span>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <button class="restart-button" id="restart-button">Kembali ke Awal</button>
+    </div>
+  </section>
 
-    <!-- DOCK NAVIGATION (HIDDEN BY DEFAULT) -->
-    <nav class="premium-dock glass-fx hidden-dock" id="main-dock">
-        <ul class="dock-list">
-            <li class="dock-item active" data-target="home">
-                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></div>
-            </li>
-            <li class="dock-item" data-target="media">
-                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle></svg></div>
-            </li>
-            <li class="dock-item" data-target="messages">
-                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path></svg></div>
-            </li>
-            <li class="dock-item" data-target="wish">
-                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
-            </li>
-            <li class="dock-item" data-target="secret">
-                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
-            </li>
-        </ul>
-    </nav>
+  <!-- ============ BOTTOM NAVIGATION ============ -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <div class="bottom-nav-glass">
+      <div class="bottom-nav-indicator" id="bottom-nav-indicator"></div>
+      <button class="nav-item active" data-target="section-hero" aria-label="Beranda">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      </button>
+      <button class="nav-item" data-target="section-story" aria-label="Cerita">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>
+      </button>
+      <button class="nav-item" data-target="section-cake" aria-label="Kue">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="M4 21v-7a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v7"/><path d="M2 21h20"/><path d="M4 16c1.5 1 2.5-1 4 0s2.5-1 4 0 2.5-1 4 0 2.5-1 4 0"/></svg>
+      </button>
+      <button class="nav-item" data-target="section-gallery" aria-label="Galeri">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+      </button>
+      <button class="nav-item" data-target="section-closing" aria-label="Penutup">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+      </button>
+    </div>
+  </nav>
 
-    <script src="script.js"></script>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
