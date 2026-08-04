@@ -1,5 +1,7 @@
 /**
- * PERBAIKAN FATAL CRASH: AUDIO CONTEXT DELAY & CLICK EVENTS
+ * ==========================================================
+ * PERBAIKAN FATAL CRASH: THREE.JS GEOMETRY FIX & ERROR HANDLING
+ * ==========================================================
  */
 
 const ROMANTIC_QUOTES = [
@@ -14,11 +16,8 @@ const ROMANTIC_QUOTES = [
 ];
 while(ROMANTIC_QUOTES.length < 100) { ROMANTIC_QUOTES.push(ROMANTIC_QUOTES[Math.floor(Math.random()*16)]); }
 
-// --- AUDIO ENGINE (LAZY LOAD UNTUK MENCEGAH CRASH DI HP) ---
 class AudioEngine {
-    constructor() {
-        this.ctx = null;
-    }
+    constructor() { this.ctx = null; }
     init() {
         if (this.ctx) return;
         try {
@@ -29,10 +28,10 @@ class AudioEngine {
                 this.masterGain.connect(this.ctx.destination);
                 this.masterGain.gain.value = 0.3;
             }
-        } catch(e) { console.warn("Audio dilarang browser HP", e); }
+        } catch(e) {}
     }
     playTone(freq, type, dur) {
-        this.init(); // Panggil hanya setelah user menyentuh layar
+        this.init(); 
         if (!this.ctx) return;
         if (this.ctx.state === 'suspended') this.ctx.resume();
         try {
@@ -52,7 +51,6 @@ class AudioEngine {
 }
 const audio = new AudioEngine();
 
-// --- PARTICLE ENGINE ---
 class ParticleEngine {
     constructor() {
         this.canvas = document.getElementById('bg-canvas-particles');
@@ -89,7 +87,7 @@ class ParticleEngine {
 }
 const particleSys = new ParticleEngine();
 
-// --- THREE JS ENGINE ---
+// --- 100% SAFE THREE JS ENGINE ---
 class ThreeJSEngine {
     constructor() {
         this.canvas = document.getElementById('three-canvas');
@@ -99,7 +97,7 @@ class ThreeJSEngine {
         
         this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, alpha: true, antialias: false });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(1); // Performa Tinggi untuk Mobile
+        this.renderer.setPixelRatio(1);
         
         const ambient = new THREE.AmbientLight(0xffffff, 0.8);
         const dirLight = new THREE.DirectionalLight(0xffe8f0, 0.6);
@@ -109,15 +107,21 @@ class ThreeJSEngine {
         const matCat = new THREE.MeshLambertMaterial({ color: 0xffb07c });
         const matRab = new THREE.MeshLambertMaterial({ color: 0xfafafa });
         
+        // PENGGUNAAN CYLINDER AGAR TIDAK CRASH DI HP
         this.cat = new THREE.Group();
-        const catBody = new THREE.Mesh(new THREE.CapsuleGeometry(1.2, 1.5, 2, 12), matCat);
+        const catBody = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 2, 16), matCat);
+        catBody.rotation.z = Math.PI / 2;
         catBody.position.y = 1.2;
         this.cat.add(catBody);
         
         this.rabbit = new THREE.Group();
         const rabBody = new THREE.Mesh(new THREE.SphereGeometry(1.4, 16, 16), matRab);
         rabBody.position.y = 1.4;
-        this.rabbit.add(rabBody);
+        
+        // Telinga kelinci ganti ke Cylinder agar kompatibel
+        const rabEar = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 1.8, 16), matRab);
+        rabEar.position.set(0, 2.5, 0);
+        this.rabbit.add(rabBody, rabEar);
 
         this.cat.position.set(-4, -5, 0);
         this.rabbit.position.set(4, -5, 0);
@@ -146,7 +150,6 @@ class ThreeJSEngine {
 }
 let threeEngine;
 
-// --- UI MANAGER ---
 class UIManager {
     constructor() {
         this.screens = document.querySelectorAll('.screen-layer');
@@ -173,11 +176,16 @@ class UIManager {
         audio.playSuccess();
         
         if(targetId === 'screen-home') {
-            if(!threeEngine) threeEngine = new ThreeJSEngine();
-            threeEngine.isActive = true;
-            this.startLiveClock();
+            // TRY-CATCH PENGAMAN: Jika 3D Gagal dimuat (HP tidak support), sisanya TETAP JALAN
+            try {
+                if(!threeEngine) threeEngine = new ThreeJSEngine();
+                threeEngine.isActive = true;
+            } catch(e) {
+                console.warn("3D dilarang oleh browser, tapi aman diabaikan.", e);
+            }
+            this.startLiveClock(); // Jam akan dipaksa menyala!
         } else if(threeEngine) {
-            threeEngine.isActive = false; // Mematikan 3D untuk menghemat baterai HP
+            threeEngine.isActive = false; 
         }
         
         if(targetId === 'screen-messages') this.initLetterScroll();
@@ -209,14 +217,10 @@ class UIManager {
             if(k.action) btn.innerText = k.l;
             else if(!k.empty) btn.innerHTML = `${k.n}<span class="letters">${k.l}</span>`;
             
-            // Standard click digabung dengan touch-action manipulation di CSS adalah cara paling stabil
             btn.addEventListener('click', () => {
                 if(k.empty) return;
-                
-                // Visual Effect
                 btn.style.transform = 'scale(0.85)';
                 setTimeout(()=> btn.style.transform = 'none', 100);
-                
                 this.handlePin(k.action ? 'clear' : k.n);
             });
             container.appendChild(btn);
@@ -271,8 +275,8 @@ class UIManager {
                 setTimeout(() => {
                     this.switchScreen('screen-home');
                     particleSys.createExplosion(window.innerWidth/2, window.innerHeight/2, ['#ff69b4', '#dda0dd']);
-                    document.getElementById('main-dock').classList.remove('hidden-dock'); // Munculkan dock
-                    if(this.bgMusic) this.bgMusic.play().catch(e=>console.log("Autoplay ditahan browser"));
+                    document.getElementById('main-dock').classList.remove('hidden-dock');
+                    if(this.bgMusic) this.bgMusic.play().catch(e=>{});
                 }, 500);
             }
             fill.style.width = `${prog}%`;
@@ -292,12 +296,18 @@ class UIManager {
                 document.getElementById('music-island').classList.add('is-paused');
             }
         });
+        
+        this.bgMusic.addEventListener('timeupdate', () => {
+            const p = (this.bgMusic.currentTime / this.bgMusic.duration) * 100;
+            document.getElementById('music-progress').style.width = `${p}%`;
+        });
     }
     
     startLiveClock() {
         const update = () => {
             const now = new Date();
-            document.getElementById('live-date-display').innerText = now.toLocaleDateString('id-ID', {weekday:'long', month:'long', day:'numeric'});
+            // FORMAT TANGGAL YANG AMAN UNTUK SEMUA HP (Jam pasti jalan)
+            document.getElementById('live-date-display').innerText = now.toLocaleDateString('id-ID', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
             document.getElementById('tz-wib').innerText = now.toLocaleTimeString('id-ID', {timeZone: 'Asia/Jakarta', hour:'2-digit', minute:'2-digit'});
             document.getElementById('tz-wita').innerText = now.toLocaleTimeString('id-ID', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'});
             document.getElementById('tz-wit').innerText = now.toLocaleTimeString('id-ID', {timeZone: 'Asia/Jayapura', hour:'2-digit', minute:'2-digit'});
@@ -365,17 +375,8 @@ class UIManager {
     }
 }
 
-// Inisialisasi Paling Aman: Memastikan seluruh HTML siap sebelum merender JS
-function startEngineSafe() {
-    try {
-        window.App = new UIManager();
-    } catch(e) {
-        console.error("Gagal memuat:", e);
-    }
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', startEngineSafe);
-} else {
-    startEngineSafe();
-}
+// Mencegah Crash, tunggu HTML termuat sepenuhnya
+document.addEventListener('DOMContentLoaded', () => {
+    try { window.App = new UIManager(); } 
+    catch(e) { console.error(e); }
+});
