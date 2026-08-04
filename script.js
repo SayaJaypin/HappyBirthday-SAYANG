@@ -1,7 +1,5 @@
 /**
- * ==========================================================
- * PERBAIKAN FATAL CRASH: THREE.JS GEOMETRY FIX & ERROR HANDLING
- * ==========================================================
+ * PERBAIKAN 100% RESPONSIVE: POSISI 3D SESUAI LAYAR HP & FIX TOMBOL UI
  */
 
 const ROMANTIC_QUOTES = [
@@ -14,8 +12,9 @@ const ROMANTIC_QUOTES = [
     "Semoga impianmu satu per satu menjadi nyata, Zahra sayang.", "Aku akan selalu mendukungmu dari mana pun.", 
     "Suara tawamu di telepon genggam adalah melodi penenang jiwaku.", "Pesan-pesanmu adalah penyemangat di tengah penatnya hariku."
 ];
-while(ROMANTIC_QUOTES.length < 100) { ROMANTIC_QUOTES.push(ROMANTIC_QUOTES[Math.floor(Math.random()*16)]); }
+while(ROMANTIC_QUOTES.length < 50) { ROMANTIC_QUOTES.push(ROMANTIC_QUOTES[Math.floor(Math.random()*16)]); }
 
+// --- AUDIO ENGINE AMAN UNTUK BROWSER HP ---
 class AudioEngine {
     constructor() { this.ctx = null; }
     init() {
@@ -51,6 +50,7 @@ class AudioEngine {
 }
 const audio = new AudioEngine();
 
+// --- PARTIKEL 2D ---
 class ParticleEngine {
     constructor() {
         this.canvas = document.getElementById('bg-canvas-particles');
@@ -87,13 +87,16 @@ class ParticleEngine {
 }
 const particleSys = new ParticleEngine();
 
-// --- 100% SAFE THREE JS ENGINE ---
+// --- THREE JS ENGINE (POSISI DINAMIS SESUAI HP) ---
 class ThreeJSEngine {
     constructor() {
         this.canvas = document.getElementById('three-canvas');
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 100);
-        this.camera.position.set(0, 2, 22);
+        
+        // PENTING: Kamera disesuaikan agar Kucing & Kelinci tidak terpotong di HP
+        const isMobile = window.innerWidth < 768;
+        this.camera = new THREE.PerspectiveCamera(isMobile ? 70 : 50, window.innerWidth/window.innerHeight, 0.1, 100);
+        this.camera.position.set(0, 0, isMobile ? 12 : 18);
         
         this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, alpha: true, antialias: false });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -104,27 +107,30 @@ class ThreeJSEngine {
         dirLight.position.set(5, 10, 5);
         this.scene.add(ambient, dirLight);
 
-        const matCat = new THREE.MeshLambertMaterial({ color: 0xffb07c });
-        const matRab = new THREE.MeshLambertMaterial({ color: 0xfafafa });
-        
-        // PENGGUNAAN CYLINDER AGAR TIDAK CRASH DI HP
+        // KUCING (Basic Box agar ringan 100%)
         this.cat = new THREE.Group();
-        const catBody = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 2, 16), matCat);
-        catBody.rotation.z = Math.PI / 2;
-        catBody.position.y = 1.2;
-        this.cat.add(catBody);
+        const catBody = new THREE.Mesh(new THREE.BoxGeometry(2, 1.5, 1.5), new THREE.MeshLambertMaterial({ color: 0xffb07c }));
+        const catEar1 = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.8, 4), new THREE.MeshLambertMaterial({ color: 0xffb07c }));
+        catEar1.position.set(-0.6, 1, 0);
+        const catEar2 = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.8, 4), new THREE.MeshLambertMaterial({ color: 0xffb07c }));
+        catEar2.position.set(0.6, 1, 0);
+        this.cat.add(catBody, catEar1, catEar2);
         
+        // KELINCI
         this.rabbit = new THREE.Group();
-        const rabBody = new THREE.Mesh(new THREE.SphereGeometry(1.4, 16, 16), matRab);
-        rabBody.position.y = 1.4;
-        
-        // Telinga kelinci ganti ke Cylinder agar kompatibel
-        const rabEar = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 1.8, 16), matRab);
-        rabEar.position.set(0, 2.5, 0);
-        this.rabbit.add(rabBody, rabEar);
+        const rabBody = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.6, 1.6), new THREE.MeshLambertMaterial({ color: 0xfafafa }));
+        const rabEar1 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 1.5, 0.3), new THREE.MeshLambertMaterial({ color: 0xfafafa }));
+        rabEar1.position.set(-0.4, 1.5, 0);
+        const rabEar2 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 1.5, 0.3), new THREE.MeshLambertMaterial({ color: 0xfafafa }));
+        rabEar2.position.set(0.4, 1.5, 0);
+        this.rabbit.add(rabBody, rabEar1, rabEar2);
 
-        this.cat.position.set(-4, -5, 0);
-        this.rabbit.position.set(4, -5, 0);
+        // PENTING: Posisi dinaikkan agar tidak tertutup menu bawah (Dock)
+        const yPos = isMobile ? -3 : -1; 
+        const xOffset = isMobile ? 2.5 : 4;
+        this.cat.position.set(-xOffset, yPos, 0);
+        this.rabbit.position.set(xOffset, yPos, 0);
+        
         this.scene.add(this.cat, this.rabbit);
         
         this.clock = new THREE.Clock();
@@ -143,13 +149,19 @@ class ThreeJSEngine {
         if(!this.isActive) return; 
         
         const t = this.clock.getElapsedTime();
-        this.cat.position.y = -5 + Math.sin(t * 2) * 0.1;
-        this.rabbit.position.y = -5 + Math.sin(t * 2.2) * 0.1;
+        // Berputar dan mengambang perlahan agar terlihat jelas
+        this.cat.rotation.y = Math.sin(t) * 0.5;
+        this.cat.position.y = (window.innerWidth < 768 ? -3 : -1) + Math.sin(t * 2) * 0.2;
+        
+        this.rabbit.rotation.y = -Math.sin(t) * 0.5;
+        this.rabbit.position.y = (window.innerWidth < 768 ? -3 : -1) + Math.sin(t * 2.2) * 0.2;
+        
         this.renderer.render(this.scene, this.camera);
     }
 }
 let threeEngine;
 
+// --- UI MANAGER AMAN ---
 class UIManager {
     constructor() {
         this.screens = document.querySelectorAll('.screen-layer');
@@ -161,40 +173,39 @@ class UIManager {
         this.initMusic();
         this.initWish();
         this.initSecret();
-        this.injectCSSDecorations();
     }
     
     switchScreen(targetId) {
-        this.screens.forEach(s => s.classList.remove('active-screen'));
-        document.getElementById(targetId).classList.add('active-screen');
+        this.screens.forEach(s => {
+            s.classList.remove('active-screen');
+        });
+        document.getElementById(`screen-${targetId}`).classList.add('active-screen');
         
         this.dockItems.forEach(i => {
             i.classList.remove('active');
-            if(i.dataset.target === targetId) i.classList.add('active');
+            if(i.dataset.target === `screen-${targetId}`) i.classList.add('active');
         });
         
         audio.playSuccess();
         
-        if(targetId === 'screen-home') {
-            // TRY-CATCH PENGAMAN: Jika 3D Gagal dimuat (HP tidak support), sisanya TETAP JALAN
+        if(targetId === 'home') {
             try {
                 if(!threeEngine) threeEngine = new ThreeJSEngine();
                 threeEngine.isActive = true;
-            } catch(e) {
-                console.warn("3D dilarang oleh browser, tapi aman diabaikan.", e);
-            }
-            this.startLiveClock(); // Jam akan dipaksa menyala!
+            } catch(e) { console.log("3D Fallback", e); }
+            this.startLiveClock();
         } else if(threeEngine) {
             threeEngine.isActive = false; 
         }
         
-        if(targetId === 'screen-messages') this.initLetterScroll();
+        if(targetId === 'messages') this.initLetterScroll();
     }
     
     initDock() {
         this.dockItems.forEach(item => {
             item.addEventListener('click', (e) => {
-                this.switchScreen(e.currentTarget.dataset.target);
+                const target = e.currentTarget.dataset.target.replace('screen-', '');
+                this.switchScreen(target);
             });
         });
     }
@@ -263,20 +274,25 @@ class UIManager {
     }
     
     startLoadingSequence() {
-        this.switchScreen('screen-loading');
+        this.switchScreen('loading');
         const fill = document.getElementById('loading-fill-element');
         const pct = document.getElementById('loading-pct');
         
         let prog = 0;
         const interval = setInterval(() => {
-            prog += 15;
+            prog += 20;
             if(prog >= 100) {
                 prog = 100; clearInterval(interval);
                 setTimeout(() => {
-                    this.switchScreen('screen-home');
+                    this.switchScreen('home');
                     particleSys.createExplosion(window.innerWidth/2, window.innerHeight/2, ['#ff69b4', '#dda0dd']);
                     document.getElementById('main-dock').classList.remove('hidden-dock');
-                    if(this.bgMusic) this.bgMusic.play().catch(e=>{});
+                    if(this.bgMusic) {
+                        this.bgMusic.play().then(() => {
+                            document.getElementById('music-eq').classList.remove('is-paused');
+                            document.getElementById('music-icon-svg').innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+                        }).catch(e=>{});
+                    }
                 }, 500);
             }
             fill.style.width = `${prog}%`;
@@ -287,13 +303,16 @@ class UIManager {
     initMusic() {
         const btn = document.getElementById('toggle-music-btn');
         if(!btn || !this.bgMusic) return;
+        
         btn.addEventListener('click', () => {
             if(this.bgMusic.paused) { 
                 this.bgMusic.play(); 
-                document.getElementById('music-island').classList.remove('is-paused');
+                document.getElementById('music-eq').classList.remove('is-paused');
+                document.getElementById('music-icon-svg').innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
             } else { 
                 this.bgMusic.pause(); 
-                document.getElementById('music-island').classList.add('is-paused');
+                document.getElementById('music-eq').classList.add('is-paused');
+                document.getElementById('music-icon-svg').innerHTML = '<path d="M8 5v14l11-7z"/>';
             }
         });
         
@@ -306,7 +325,6 @@ class UIManager {
     startLiveClock() {
         const update = () => {
             const now = new Date();
-            // FORMAT TANGGAL YANG AMAN UNTUK SEMUA HP (Jam pasti jalan)
             document.getElementById('live-date-display').innerText = now.toLocaleDateString('id-ID', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
             document.getElementById('tz-wib').innerText = now.toLocaleTimeString('id-ID', {timeZone: 'Asia/Jakarta', hour:'2-digit', minute:'2-digit'});
             document.getElementById('tz-wita').innerText = now.toLocaleTimeString('id-ID', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'});
@@ -356,27 +374,10 @@ class UIManager {
                 document.getElementById('ultimate-gift-container').classList.remove('hidden');
             }, 800);
         });
-        document.getElementById('reset-journey-btn').addEventListener('click', () => { this.switchScreen('screen-home'); });
-    }
-
-    injectCSSDecorations() {
-        const layer = document.getElementById('css-decor-layer');
-        const shapes = ['✦', '★', '♦', '●', '✧', '⋆'];
-        for(let i=0; i<40; i++) {
-            const span = document.createElement('span');
-            span.className = 'css-particle-item';
-            span.innerText = shapes[Math.floor(Math.random()*shapes.length)];
-            span.style.left = `${Math.random()*100}vw`;
-            span.style.fontSize = `${Math.random()*15 + 10}px`;
-            span.style.setProperty('--duration', `${Math.random()*20 + 15}s`);
-            span.style.animationDelay = `${Math.random()*20}s`;
-            layer.appendChild(span);
-        }
+        document.getElementById('reset-journey-btn').addEventListener('click', () => { this.switchScreen('home'); });
     }
 }
 
-// Mencegah Crash, tunggu HTML termuat sepenuhnya
 document.addEventListener('DOMContentLoaded', () => {
-    try { window.App = new UIManager(); } 
-    catch(e) { console.error(e); }
+    window.App = new UIManager();
 });

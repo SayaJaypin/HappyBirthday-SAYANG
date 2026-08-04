@@ -7,46 +7,31 @@
     <meta name="description" content="Exclusive Premium Birthday Experience for Zahra">
     <title>Untuk Zahra - Premium Virtual Birthday</title>
     
-    <!-- Premium Typography Setup -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- External Library: Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- SVG Filters for Smooth Rendering -->
-    <svg style="display: none; position: absolute; pointer-events: none; z-index: -9999;" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-            <filter id="noise">
-                <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3" stitchTiles="stitch"/>
-                <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 0.1 0" />
-            </filter>
-        </defs>
-    </svg>
-
-    <!-- Global Noise Overlay -->
+    <!-- Lapisan Background Dasar -->
     <div class="noise-overlay"></div>
-
-    <!-- Canvas Layers (Background & 3D) -->
     <canvas id="bg-canvas-particles"></canvas> 
     <canvas id="three-canvas"></canvas> 
-    <div id="css-decor-layer" class="parallax-layer"></div>
+    <div id="css-decor-layer"></div>
 
-    <!-- Audio Player (Hidden UI) -->
+    <!-- Mesin Audio Tersembunyi -->
     <div id="audio-engine-wrapper" style="display: none;">
         <audio id="bg-music" loop preload="auto">
             <source src="assets/audio/lagu.mp3" type="audio/mpeg">
         </audio>
     </div>
 
-    <!-- Floating Music Controller Apple Style -->
+    <!-- Pemutar Musik Apple Style -->
     <div class="dynamic-island-music glass-fx" id="music-island">
         <div class="island-left">
-            <div class="eq-bars">
+            <div class="eq-bars is-paused" id="music-eq">
                 <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
             </div>
         </div>
@@ -55,8 +40,10 @@
             <p class="track-artist">Zahra & Jay</p>
         </div>
         <div class="island-right">
-            <button id="toggle-music-btn" class="icon-btn control-btn">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <button id="toggle-music-btn" class="icon-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor" id="music-icon-svg">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
             </button>
         </div>
         <div class="island-progress-wrapper">
@@ -65,8 +52,8 @@
     </div>
 
     <main id="app-container">
-        <!-- SCREEN 1: SECURITY PIN -->
-        <section id="screen-pin" class="screen-layer active-screen" data-index="0">
+        <!-- HALAMAN 1: PIN -->
+        <section id="screen-pin" class="screen-layer active-screen" data-target="pin">
             <div class="screen-content-wrapper">
                 <div class="glass-panel pin-auth-panel">
                     <div class="auth-header">
@@ -76,21 +63,19 @@
                         <h1 class="heading-primary">Verifikasi Hati</h1>
                         <p class="text-subtitle">Masukkan tanggal istimewa kita untuk membuka keajaiban.</p>
                     </div>
-                    
                     <div class="pin-indicator-group" id="pin-indicators">
                         <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
                         <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
                     </div>
-
                     <div class="premium-keypad" id="numpad-container">
-                        <!-- Akan diisi otomatis oleh script.js -->
+                        <!-- Keypad dibuat oleh JavaScript -->
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SCREEN 2: HEAVY LOADING SEQUENCE -->
-        <section id="screen-loading" class="screen-layer" data-index="1">
+        <!-- HALAMAN 2: LOADING -->
+        <section id="screen-loading" class="screen-layer" data-target="loading">
             <div class="screen-content-wrapper">
                 <div class="loading-orchestrator">
                     <div class="spinner-premium">
@@ -109,8 +94,8 @@
             </div>
         </section>
 
-        <!-- SCREEN 3: HOME DASHBOARD -->
-        <section id="screen-home" class="screen-layer" data-index="2">
+        <!-- HALAMAN 3: BERANDA -->
+        <section id="screen-home" class="screen-layer" data-target="home">
             <div class="screen-content-wrapper flex-top">
                 <div class="greeting-hero glass-panel">
                     <div class="badge-premium">09 Agustus 2012</div>
@@ -120,7 +105,7 @@
                     <div class="clock-widget neomorphic-inset">
                         <div class="clock-header">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                            <span id="live-date-display">Sinkronisasi Tanggal...</span>
+                            <span id="live-date-display">Sinkronisasi Waktu...</span>
                         </div>
                         <div class="world-clocks">
                             <div class="clock-item"><span class="tz-label">WIB</span><span class="tz-time" id="tz-wib">--:--</span></div>
@@ -131,32 +116,32 @@
                     </div>
                 </div>
                 <div class="interaction-hint" id="hint-3d">
-                    <span>Sentuh Kucing & Kelinci untuk berinteraksi</span>
+                    <span>✦ Sentuh Kucing & Kelinci ✦</span>
                 </div>
             </div>
         </section>
 
-        <!-- SCREEN 4: IMMERSIVE MEDIA GALLERY -->
-        <section id="screen-media" class="screen-layer" data-index="3">
+        <!-- HALAMAN 4: GALERI -->
+        <section id="screen-media" class="screen-layer" data-target="media">
             <div class="masonry-gallery-wrapper">
                 <div class="gallery-header glass-panel-small">
                     <h2 class="heading-secondary">Kenangan Virtual Kita</h2>
                 </div>
                 <div class="media-grid-premium" id="media-grid-container">
-                    <div class="media-card" style="--delay: 0.1s"><div class="media-inner"><video src="assets/videos/video1.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
-                    <div class="media-card" style="--delay: 0.2s"><div class="media-inner"><img src="assets/images/foto1.jpg" alt="Memori 1" class="media-object"></div></div>
-                    <div class="media-card" style="--delay: 0.3s"><div class="media-inner"><video src="assets/videos/video2.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
-                    <div class="media-card" style="--delay: 0.4s"><div class="media-inner"><img src="assets/images/foto2.jpg" alt="Memori 2" class="media-object"></div></div>
-                    <div class="media-card" style="--delay: 0.5s"><div class="media-inner"><video src="assets/videos/video3.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
-                    <div class="media-card" style="--delay: 0.6s"><div class="media-inner"><img src="assets/images/foto3.jpg" alt="Memori 3" class="media-object"></div></div>
-                    <div class="media-card" style="--delay: 0.7s"><div class="media-inner"><video src="assets/videos/video4.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
-                    <div class="media-card" style="--delay: 0.8s"><div class="media-inner"><img src="assets/images/foto4.jpg" alt="Memori 4" class="media-object"></div></div>
+                    <div class="media-card"><div class="media-inner"><video src="assets/videos/video1.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
+                    <div class="media-card"><div class="media-inner"><img src="assets/images/foto1.jpg" alt="Memori 1" class="media-object"></div></div>
+                    <div class="media-card"><div class="media-inner"><video src="assets/videos/video2.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
+                    <div class="media-card"><div class="media-inner"><img src="assets/images/foto2.jpg" alt="Memori 2" class="media-object"></div></div>
+                    <div class="media-card"><div class="media-inner"><video src="assets/videos/video3.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
+                    <div class="media-card"><div class="media-inner"><img src="assets/images/foto3.jpg" alt="Memori 3" class="media-object"></div></div>
+                    <div class="media-card"><div class="media-inner"><video src="assets/videos/video4.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
+                    <div class="media-card"><div class="media-inner"><img src="assets/images/foto4.jpg" alt="Memori 4" class="media-object"></div></div>
                 </div>
             </div>
         </section>
 
-        <!-- SCREEN 5: ENDLESS ROMANTIC SCROLL -->
-        <section id="screen-messages" class="screen-layer" data-index="4">
+        <!-- HALAMAN 5: PESAN -->
+        <section id="screen-messages" class="screen-layer" data-target="messages">
             <div class="screen-content-wrapper">
                 <div class="message-envelope-container" id="envelope-wrapper">
                     <div class="premium-envelope">
@@ -184,16 +169,15 @@
             </div>
         </section>
 
-        <!-- SCREEN 6: WISH & PARTICLE ENGINE -->
-        <section id="screen-wish" class="screen-layer" data-index="5">
+        <!-- HALAMAN 6: HARAPAN -->
+        <section id="screen-wish" class="screen-layer" data-target="wish">
             <div class="screen-content-wrapper">
                 <div class="glass-panel wish-panel">
                     <h2 class="heading-secondary">Terbangkan Harapan</h2>
-                    <p class="text-body">Ketik doa dan harapanmu di sini. Saat kau mengirimkannya, sistem akan mengubah teksmu menjadi rasi bintang.</p>
+                    <p class="text-body">Ketik doa dan harapanmu di sini. Saat kau mengirimkannya, sistem akan mengubah teksmu menjadi rasi bintang yang indah.</p>
                     
                     <div class="input-group-premium">
                         <textarea id="wish-input" class="premium-textarea" placeholder="Aku berharap di usia ini..." rows="4"></textarea>
-                        <div class="character-count" id="char-count">0 / 500</div>
                     </div>
                     
                     <button id="send-wish-btn" class="btn-primary full-width">
@@ -203,8 +187,8 @@
             </div>
         </section>
 
-        <!-- SCREEN 7: THE SECRET REVEAL -->
-        <section id="screen-secret" class="screen-layer" data-index="6">
+        <!-- HALAMAN 7: RAHASIA -->
+        <section id="screen-secret" class="screen-layer" data-target="secret">
             <div class="screen-content-wrapper flex-center full-height">
                 <div class="svg-drawing-container" id="love-drawing-container">
                     <svg class="giant-love-svg" viewBox="0 0 200 200">
@@ -228,39 +212,39 @@
 
                 <div class="ultimate-gift-container glass-panel hidden" id="ultimate-gift-container">
                     <div class="gift-image-frame">
-                        <img src="assets/images/hadiah-akhir.jpg" alt="Hadiah Spesial 16:9" class="gift-img-169">
+                        <img src="assets/images/hadiah-akhir.jpg" alt="Hadiah Spesial" class="gift-img-169">
                         <div class="frame-shine"></div>
                     </div>
                     <div class="gift-text-area">
                         <p class="exact-caption">"HAYYIEE CINTAAA, ini hadiah buat kamu! hadiah ini mungkin kecil dan ngga seberapa, tapi aku bener bener merayakan sekali ulang tahun kamu. selamat bertambah umur yaa cintaa, YUKKK, ambil hadiah nyaa!"</p>
                     </div>
                     <a href="https://wa.me/6283815954022?text=AKU%20MAU%20SAYANGGG%20%3A3" target="_blank" class="btn-whatsapp glow-effect">Ambil Hadiah</a>
-                    <button id="reset-journey-btn" class="btn-text-only mt-4">Kembali ke Awal Ulang Tahun</button>
+                    <button id="reset-journey-btn" class="btn-text-only mt-4">Kembali ke Awal</button>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- DOCK NAVIGATION (HIDDEN BY DEFAULT) -->
+    <!-- DOCK NAVIGATION -->
     <nav class="premium-dock glass-fx hidden-dock" id="main-dock">
         <ul class="dock-list">
-            <li class="dock-item active" data-target="screen-home" tooltip="Home">
+            <li class="dock-item active" data-target="screen-home">
                 <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></div>
                 <div class="dock-dot"></div>
             </li>
-            <li class="dock-item" data-target="screen-media" tooltip="Memori">
+            <li class="dock-item" data-target="screen-media">
                 <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle></svg></div>
                 <div class="dock-dot"></div>
             </li>
-            <li class="dock-item" data-target="screen-messages" tooltip="Surat">
+            <li class="dock-item" data-target="screen-messages">
                 <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path></svg></div>
                 <div class="dock-dot"></div>
             </li>
-            <li class="dock-item" data-target="screen-wish" tooltip="Harapan">
+            <li class="dock-item" data-target="screen-wish">
                 <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></div>
                 <div class="dock-dot"></div>
             </li>
-            <li class="dock-item" data-target="screen-secret" tooltip="Rahasia">
+            <li class="dock-item" data-target="screen-secret">
                 <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
                 <div class="dock-dot"></div>
             </li>
