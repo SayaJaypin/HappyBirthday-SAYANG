@@ -1,5 +1,5 @@
 /**
- * PERBAIKAN 100% RESPONSIVE: POSISI 3D SESUAI LAYAR HP & FIX TOMBOL UI
+ * PERBAIKAN 100% FINAL: BENTUK KUCING & KELINCI LUCU + RAYCASTER TOUCH + SCROLL LANCAR
  */
 
 const ROMANTIC_QUOTES = [
@@ -14,7 +14,6 @@ const ROMANTIC_QUOTES = [
 ];
 while(ROMANTIC_QUOTES.length < 50) { ROMANTIC_QUOTES.push(ROMANTIC_QUOTES[Math.floor(Math.random()*16)]); }
 
-// --- AUDIO ENGINE AMAN UNTUK BROWSER HP ---
 class AudioEngine {
     constructor() { this.ctx = null; }
     init() {
@@ -31,8 +30,7 @@ class AudioEngine {
     }
     playTone(freq, type, dur) {
         this.init(); 
-        if (!this.ctx) return;
-        if (this.ctx.state === 'suspended') this.ctx.resume();
+        if (!this.ctx || this.ctx.state === 'suspended') return;
         try {
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
@@ -50,89 +48,108 @@ class AudioEngine {
 }
 const audio = new AudioEngine();
 
-// --- PARTIKEL 2D ---
-class ParticleEngine {
-    constructor() {
-        this.canvas = document.getElementById('bg-canvas-particles');
-        this.ctx = this.canvas.getContext('2d', { alpha: true });
-        this.particles = [];
-        this.resize();
-        window.addEventListener('resize', () => this.resize());
-        requestAnimationFrame(this.animate.bind(this));
-    }
-    resize() { this.canvas.width = window.innerWidth; this.canvas.height = window.innerHeight; }
-    createExplosion(x, y, colorArr) {
-        for(let i=0; i<80; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const speed = Math.random() * 6 + 1;
-            this.particles.push({
-                x: x, y: y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-                radius: Math.random() * 3 + 1, color: colorArr[Math.floor(Math.random() * colorArr.length)],
-                alpha: 1, decay: Math.random() * 0.02 + 0.01
-            });
-        }
-    }
-    animate() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        for(let i = this.particles.length - 1; i >= 0; i--) {
-            let p = this.particles[i];
-            p.vy += 0.05; p.x += p.vx; p.y += p.vy; p.alpha -= p.decay;
-            this.ctx.globalAlpha = Math.max(0, p.alpha);
-            this.ctx.beginPath(); this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            this.ctx.fillStyle = p.color; this.ctx.fill();
-            if(p.alpha <= 0) this.particles.splice(i, 1);
-        }
-        requestAnimationFrame(this.animate.bind(this));
-    }
-}
-const particleSys = new ParticleEngine();
-
-// --- THREE JS ENGINE (POSISI DINAMIS SESUAI HP) ---
+// --- 3D ENGINE (KUCING & KELINCI YANG BENAR-BENAR LUCU + FITUR SENTUH) ---
 class ThreeJSEngine {
     constructor() {
         this.canvas = document.getElementById('three-canvas');
         this.scene = new THREE.Scene();
         
-        // PENTING: Kamera disesuaikan agar Kucing & Kelinci tidak terpotong di HP
         const isMobile = window.innerWidth < 768;
-        this.camera = new THREE.PerspectiveCamera(isMobile ? 70 : 50, window.innerWidth/window.innerHeight, 0.1, 100);
-        this.camera.position.set(0, 0, isMobile ? 12 : 18);
+        this.camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 100);
+        this.camera.position.set(0, 0, isMobile ? 26 : 20); // Zoom out agar terlihat jelas
         
-        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, alpha: true, antialias: false });
+        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, alpha: true, antialias: true });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setPixelRatio(1);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         
-        const ambient = new THREE.AmbientLight(0xffffff, 0.8);
-        const dirLight = new THREE.DirectionalLight(0xffe8f0, 0.6);
+        const ambient = new THREE.AmbientLight(0xffffff, 0.9);
+        const dirLight = new THREE.DirectionalLight(0xffe8f0, 0.5);
         dirLight.position.set(5, 10, 5);
         this.scene.add(ambient, dirLight);
 
-        // KUCING (Basic Box agar ringan 100%)
-        this.cat = new THREE.Group();
-        const catBody = new THREE.Mesh(new THREE.BoxGeometry(2, 1.5, 1.5), new THREE.MeshLambertMaterial({ color: 0xffb07c }));
-        const catEar1 = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.8, 4), new THREE.MeshLambertMaterial({ color: 0xffb07c }));
-        catEar1.position.set(-0.6, 1, 0);
-        const catEar2 = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.8, 4), new THREE.MeshLambertMaterial({ color: 0xffb07c }));
-        catEar2.position.set(0.6, 1, 0);
-        this.cat.add(catBody, catEar1, catEar2);
-        
-        // KELINCI
-        this.rabbit = new THREE.Group();
-        const rabBody = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.6, 1.6), new THREE.MeshLambertMaterial({ color: 0xfafafa }));
-        const rabEar1 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 1.5, 0.3), new THREE.MeshLambertMaterial({ color: 0xfafafa }));
-        rabEar1.position.set(-0.4, 1.5, 0);
-        const rabEar2 = new THREE.Mesh(new THREE.BoxGeometry(0.3, 1.5, 0.3), new THREE.MeshLambertMaterial({ color: 0xfafafa }));
-        rabEar2.position.set(0.4, 1.5, 0);
-        this.rabbit.add(rabBody, rabEar1, rabEar2);
+        const matCat = new THREE.MeshLambertMaterial({ color: 0xffb07c }); // Orange
+        const matRab = new THREE.MeshLambertMaterial({ color: 0xfafafa }); // Putih
+        const matBlack = new THREE.MeshBasicMaterial({ color: 0x222222 });
+        const matPink = new THREE.MeshBasicMaterial({ color: 0xff69b4 });
 
-        // PENTING: Posisi dinaikkan agar tidak tertutup menu bawah (Dock)
-        const yPos = isMobile ? -3 : -1; 
-        const xOffset = isMobile ? 2.5 : 4;
-        this.cat.position.set(-xOffset, yPos, 0);
-        this.rabbit.position.set(xOffset, yPos, 0);
+        // --- MERAKIT KUCING LUCU (TIDAK AKAN CRASH) ---
+        this.cat = new THREE.Group();
+        const catBody = new THREE.Mesh(new THREE.SphereGeometry(1.5, 32, 32), matCat);
+        catBody.scale.y = 1.1; // Sedikit lonjong
+        
+        const catHead = new THREE.Mesh(new THREE.SphereGeometry(1.2, 32, 32), matCat);
+        catHead.position.set(0, 2, 0.5);
+        
+        const earGeo = new THREE.ConeGeometry(0.4, 1, 16);
+        const catEar1 = new THREE.Mesh(earGeo, matCat); catEar1.position.set(-0.6, 2.8, 0.5); catEar1.rotation.z = 0.2;
+        const catEar2 = new THREE.Mesh(earGeo, matCat); catEar2.position.set(0.6, 2.8, 0.5); catEar2.rotation.z = -0.2;
+        
+        const catEye1 = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), matBlack); catEye1.position.set(-0.4, 2, 1.6);
+        const catEye2 = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 16), matBlack); catEye2.position.set(0.4, 2, 1.6);
+        const catNose = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 16), matPink); catNose.position.set(0, 1.8, 1.7);
+        
+        this.cat.add(catBody, catHead, catEar1, catEar2, catEye1, catEye2, catNose);
+        
+        // --- MERAKIT KELINCI LUCU ---
+        this.rabbit = new THREE.Group();
+        const rabBody = new THREE.Mesh(new THREE.SphereGeometry(1.5, 32, 32), matRab);
+        rabBody.scale.y = 1.1;
+        
+        const rabHead = new THREE.Mesh(new THREE.SphereGeometry(1.1, 32, 32), matRab);
+        rabHead.position.set(0, 2.2, 0.5);
+        
+        const rEarGeo = new THREE.CylinderGeometry(0.2, 0.3, 2.5, 16); // Telinga panjang
+        const rabEar1 = new THREE.Mesh(rEarGeo, matRab); rabEar1.position.set(-0.5, 3.8, 0.3); rabEar1.rotation.z = 0.1;
+        const rabEar2 = new THREE.Mesh(rEarGeo, matRab); rabEar2.position.set(0.5, 3.8, 0.3); rabEar2.rotation.z = -0.1;
+        
+        const rabEye1 = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), matBlack); rabEye1.position.set(-0.4, 2.3, 1.5);
+        const rabEye2 = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), matBlack); rabEye2.position.set(0.4, 2.3, 1.5);
+        const rabNose = new THREE.Mesh(new THREE.SphereGeometry(0.1, 16, 16), matPink); rabNose.position.set(0, 2.1, 1.6);
+        
+        this.rabbit.add(rabBody, rabHead, rabEar1, rabEar2, rabEye1, rabEye2, rabNose);
+
+        // --- PENEMPATAN POSISI AGAR TERLIHAT ---
+        this.baseY = isMobile ? -8 : -6; // Simpan posisi asli Y
+        const xOffset = isMobile ? 3.5 : 5;
+        this.cat.position.set(-xOffset, this.baseY, 0);
+        this.rabbit.position.set(xOffset, this.baseY, 0);
         
         this.scene.add(this.cat, this.rabbit);
         
+        // --- FITUR SENTUHAN (RAYCASTER) ---
+        this.raycaster = new THREE.Raycaster();
+        this.mouse = new THREE.Vector2();
+        
+        // Catat variabel lompatan
+        this.catJump = 0;
+        this.rabJump = 0;
+
+        window.addEventListener('pointerdown', (e) => {
+            if(!this.isActive) return;
+            // Hitung posisi klik ke 3D
+            this.mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            this.mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            
+            this.raycaster.setFromCamera(this.mouse, this.camera);
+            const intersects = this.raycaster.intersectObjects([this.cat, this.rabbit], true);
+            
+            if(intersects.length > 0) {
+                let obj = intersects[0].object;
+                while(obj.parent && obj.parent.type === "Group") {
+                    if(obj.parent === this.cat || obj.parent === this.rabbit) { obj = obj.parent; break; }
+                    obj = obj.parent;
+                }
+                
+                if(obj === this.cat && this.catJump <= 0) {
+                    this.catJump = 0.5; // Kekuatan lompat
+                    audio.playSuccess();
+                } else if(obj === this.rabbit && this.rabJump <= 0) {
+                    this.rabJump = 0.5; // Kekuatan lompat
+                    audio.playSuccess();
+                }
+            }
+        });
+
         this.clock = new THREE.Clock();
         this.isActive = true; 
         
@@ -149,19 +166,34 @@ class ThreeJSEngine {
         if(!this.isActive) return; 
         
         const t = this.clock.getElapsedTime();
-        // Berputar dan mengambang perlahan agar terlihat jelas
-        this.cat.rotation.y = Math.sin(t) * 0.5;
-        this.cat.position.y = (window.innerWidth < 768 ? -3 : -1) + Math.sin(t * 2) * 0.2;
         
-        this.rabbit.rotation.y = -Math.sin(t) * 0.5;
-        this.rabbit.position.y = (window.innerWidth < 768 ? -3 : -1) + Math.sin(t * 2.2) * 0.2;
+        // Animasi Lompatan Kucing
+        if(this.catJump > 0 || this.cat.position.y > this.baseY) {
+            this.cat.position.y += this.catJump;
+            this.catJump -= 0.03; // Gravitasi
+            if(this.cat.position.y <= this.baseY) { this.cat.position.y = this.baseY; this.catJump = 0; }
+        } else {
+            this.cat.position.y = this.baseY + Math.sin(t * 2) * 0.2; // Nafas biasa
+        }
+        
+        // Animasi Lompatan Kelinci
+        if(this.rabJump > 0 || this.rabbit.position.y > this.baseY) {
+            this.rabbit.position.y += this.rabJump;
+            this.rabJump -= 0.03; // Gravitasi
+            this.rabbit.rotation.y += 0.1; // Muter pas lompat
+            if(this.rabbit.position.y <= this.baseY) { this.rabbit.position.y = this.baseY; this.rabJump = 0; this.rabbit.rotation.y = 0;}
+        } else {
+            this.rabbit.position.y = this.baseY + Math.sin(t * 2.2) * 0.2;
+        }
+
+        // Putar kanan kiri sedikit
+        if(this.catJump === 0) this.cat.rotation.y = Math.sin(t) * 0.3;
         
         this.renderer.render(this.scene, this.camera);
     }
 }
-let threeEngine;
 
-// --- UI MANAGER AMAN ---
+// --- UI MANAGER ---
 class UIManager {
     constructor() {
         this.screens = document.querySelectorAll('.screen-layer');
@@ -176,9 +208,7 @@ class UIManager {
     }
     
     switchScreen(targetId) {
-        this.screens.forEach(s => {
-            s.classList.remove('active-screen');
-        });
+        this.screens.forEach(s => s.classList.remove('active-screen'));
         document.getElementById(`screen-${targetId}`).classList.add('active-screen');
         
         this.dockItems.forEach(i => {
@@ -192,7 +222,7 @@ class UIManager {
             try {
                 if(!threeEngine) threeEngine = new ThreeJSEngine();
                 threeEngine.isActive = true;
-            } catch(e) { console.log("3D Fallback", e); }
+            } catch(e) { console.log(e); }
             this.startLiveClock();
         } else if(threeEngine) {
             threeEngine.isActive = false; 
@@ -232,6 +262,10 @@ class UIManager {
                 if(k.empty) return;
                 btn.style.transform = 'scale(0.85)';
                 setTimeout(()=> btn.style.transform = 'none', 100);
+                
+                // Minta izin audio saat tombol pertama kali diklik
+                if(audio.ctx === null) audio.init();
+                
                 this.handlePin(k.action ? 'clear' : k.n);
             });
             container.appendChild(btn);
@@ -285,7 +319,6 @@ class UIManager {
                 prog = 100; clearInterval(interval);
                 setTimeout(() => {
                     this.switchScreen('home');
-                    particleSys.createExplosion(window.innerWidth/2, window.innerHeight/2, ['#ff69b4', '#dda0dd']);
                     document.getElementById('main-dock').classList.remove('hidden-dock');
                     if(this.bgMusic) {
                         this.bgMusic.play().then(() => {
@@ -359,7 +392,9 @@ class UIManager {
             if(text.value.trim() === '') return;
             audio.playSuccess();
             text.value = ''; 
-            particleSys.createExplosion(window.innerWidth/2, window.innerHeight/2, ['#FFD700', '#FF69B4', '#FFFFFF']);
+            // Animasi kecil di tombol
+            document.querySelector('#send-wish-btn .btn-text').innerText = "Terkirim ✦";
+            setTimeout(() => document.querySelector('#send-wish-btn .btn-text').innerText = "Kirim ke Semesta", 2000);
         });
     }
     
@@ -367,7 +402,6 @@ class UIManager {
         const boxBtn = document.getElementById('magic-box-btn');
         boxBtn.addEventListener('click', () => {
             audio.playSuccess();
-            particleSys.createExplosion(window.innerWidth/2, window.innerHeight/2, ['#A855F7', '#FF69B4']);
             boxBtn.classList.add('box-opened');
             setTimeout(() => {
                 document.getElementById('secret-box-wrapper').classList.add('hidden');
@@ -378,6 +412,7 @@ class UIManager {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    window.App = new UIManager();
-});
+// Eksekusi Paling Aman
+window.onload = () => {
+    try { window.App = new UIManager(); } catch(e) { console.error(e); }
+};

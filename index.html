@@ -15,20 +15,19 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Lapisan Background Dasar -->
+    <!-- Lapisan Latar Belakang -->
     <div class="noise-overlay"></div>
     <canvas id="bg-canvas-particles"></canvas> 
     <canvas id="three-canvas"></canvas> 
-    <div id="css-decor-layer"></div>
 
-    <!-- Mesin Audio Tersembunyi -->
+    <!-- Mesin Audio -->
     <div id="audio-engine-wrapper" style="display: none;">
         <audio id="bg-music" loop preload="auto">
             <source src="assets/audio/lagu.mp3" type="audio/mpeg">
         </audio>
     </div>
 
-    <!-- Pemutar Musik Apple Style -->
+    <!-- Pemutar Musik -->
     <div class="dynamic-island-music glass-fx" id="music-island">
         <div class="island-left">
             <div class="eq-bars is-paused" id="music-eq">
@@ -52,7 +51,7 @@
     </div>
 
     <main id="app-container">
-        <!-- HALAMAN 1: PIN -->
+        <!-- SCREEN 1: PIN -->
         <section id="screen-pin" class="screen-layer active-screen" data-target="pin">
             <div class="screen-content-wrapper">
                 <div class="glass-panel pin-auth-panel">
@@ -68,13 +67,13 @@
                         <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
                     </div>
                     <div class="premium-keypad" id="numpad-container">
-                        <!-- Keypad dibuat oleh JavaScript -->
+                        <!-- Keypad JS -->
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- HALAMAN 2: LOADING -->
+        <!-- SCREEN 2: LOADING -->
         <section id="screen-loading" class="screen-layer" data-target="loading">
             <div class="screen-content-wrapper">
                 <div class="loading-orchestrator">
@@ -94,7 +93,7 @@
             </div>
         </section>
 
-        <!-- HALAMAN 3: BERANDA -->
+        <!-- SCREEN 3: HOME -->
         <section id="screen-home" class="screen-layer" data-target="home">
             <div class="screen-content-wrapper flex-top">
                 <div class="greeting-hero glass-panel">
@@ -121,26 +120,26 @@
             </div>
         </section>
 
-        <!-- HALAMAN 4: GALERI -->
+        <!-- SCREEN 4: MEDIA -->
         <section id="screen-media" class="screen-layer" data-target="media">
-            <div class="masonry-gallery-wrapper">
+            <div class="screen-content-wrapper">
                 <div class="gallery-header glass-panel-small">
                     <h2 class="heading-secondary">Kenangan Virtual Kita</h2>
                 </div>
                 <div class="media-grid-premium" id="media-grid-container">
-                    <div class="media-card"><div class="media-inner"><video src="assets/videos/video1.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
-                    <div class="media-card"><div class="media-inner"><img src="assets/images/foto1.jpg" alt="Memori 1" class="media-object"></div></div>
-                    <div class="media-card"><div class="media-inner"><video src="assets/videos/video2.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
-                    <div class="media-card"><div class="media-inner"><img src="assets/images/foto2.jpg" alt="Memori 2" class="media-object"></div></div>
-                    <div class="media-card"><div class="media-inner"><video src="assets/videos/video3.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
-                    <div class="media-card"><div class="media-inner"><img src="assets/images/foto3.jpg" alt="Memori 3" class="media-object"></div></div>
-                    <div class="media-card"><div class="media-inner"><video src="assets/videos/video4.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
-                    <div class="media-card"><div class="media-inner"><img src="assets/images/foto4.jpg" alt="Memori 4" class="media-object"></div></div>
+                    <div class="media-card"><video src="assets/videos/video1.mp4" autoplay loop muted playsinline class="media-object"></video></div>
+                    <div class="media-card"><img src="assets/images/foto1.jpg" alt="Memori 1" class="media-object"></div>
+                    <div class="media-card"><video src="assets/videos/video2.mp4" autoplay loop muted playsinline class="media-object"></video></div>
+                    <div class="media-card"><img src="assets/images/foto2.jpg" alt="Memori 2" class="media-object"></div>
+                    <div class="media-card"><video src="assets/videos/video3.mp4" autoplay loop muted playsinline class="media-object"></video></div>
+                    <div class="media-card"><img src="assets/images/foto3.jpg" alt="Memori 3" class="media-object"></div>
+                    <div class="media-card"><video src="assets/videos/video4.mp4" autoplay loop muted playsinline class="media-object"></video></div>
+                    <div class="media-card"><img src="assets/images/foto4.jpg" alt="Memori 4" class="media-object"></div>
                 </div>
             </div>
         </section>
 
-        <!-- HALAMAN 5: PESAN -->
+        <!-- SCREEN 5: MESSAGES -->
         <section id="screen-messages" class="screen-layer" data-target="messages">
             <div class="screen-content-wrapper">
                 <div class="message-envelope-container" id="envelope-wrapper">
@@ -160,21 +159,17 @@
                             <div class="divider-ornate"></div>
                         </div>
                         <div class="letter-scroll-area" id="romantic-quotes-container"></div>
-                        <div class="scroll-indicator">
-                            <span>Scroll ke bawah</span>
-                            <div class="arrow-down"></div>
-                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- HALAMAN 6: HARAPAN -->
+        <!-- SCREEN 6: WISH -->
         <section id="screen-wish" class="screen-layer" data-target="wish">
             <div class="screen-content-wrapper">
                 <div class="glass-panel wish-panel">
                     <h2 class="heading-secondary">Terbangkan Harapan</h2>
-                    <p class="text-body">Ketik doa dan harapanmu di sini. Saat kau mengirimkannya, sistem akan mengubah teksmu menjadi rasi bintang yang indah.</p>
+                    <p class="text-body">Ketik doa dan harapanmu di sini. Saat kau mengirimkannya, sistem akan mengubah teksmu menjadi rasi bintang.</p>
                     
                     <div class="input-group-premium">
                         <textarea id="wish-input" class="premium-textarea" placeholder="Aku berharap di usia ini..." rows="4"></textarea>
@@ -187,22 +182,10 @@
             </div>
         </section>
 
-        <!-- HALAMAN 7: RAHASIA -->
+        <!-- SCREEN 7: SECRET -->
         <section id="screen-secret" class="screen-layer" data-target="secret">
             <div class="screen-content-wrapper flex-center full-height">
-                <div class="svg-drawing-container" id="love-drawing-container">
-                    <svg class="giant-love-svg" viewBox="0 0 200 200">
-                        <defs>
-                            <linearGradient id="loveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#FF69B4" />
-                                <stop offset="100%" stop-color="#DDA0DD" />
-                            </linearGradient>
-                        </defs>
-                        <path id="giant-love-path" d="M 100,180 C 100,180 20,120 20,60 C 20,30 50,10 80,30 C 100,50 100,50 100,50 C 100,50 100,50 120,30 C 150,10 180,30 180,60 C 180,120 100,180 100,180 Z" stroke="url(#loveGrad)" stroke-width="4" fill="none"/>
-                    </svg>
-                </div>
-
-                <div class="secret-box-wrapper hidden" id="secret-box-wrapper">
+                <div class="secret-box-wrapper" id="secret-box-wrapper">
                     <div class="magic-box-3d" id="magic-box-btn">
                         <div class="box-lid"></div>
                         <div class="box-body"></div>
@@ -213,7 +196,6 @@
                 <div class="ultimate-gift-container glass-panel hidden" id="ultimate-gift-container">
                     <div class="gift-image-frame">
                         <img src="assets/images/hadiah-akhir.jpg" alt="Hadiah Spesial" class="gift-img-169">
-                        <div class="frame-shine"></div>
                     </div>
                     <div class="gift-text-area">
                         <p class="exact-caption">"HAYYIEE CINTAAA, ini hadiah buat kamu! hadiah ini mungkin kecil dan ngga seberapa, tapi aku bener bener merayakan sekali ulang tahun kamu. selamat bertambah umur yaa cintaa, YUKKK, ambil hadiah nyaa!"</p>
