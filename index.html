@@ -5,27 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#FFD1DC">
     <meta name="description" content="Exclusive Premium Birthday Experience for Zahra">
-    <title>Untuk Zahra - A Premium Virtual Birthday Experience</title>
+    <title>Untuk Zahra - Premium Virtual Birthday</title>
     
     <!-- Premium Typography Setup -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- External Library: Three.js (Required for 3D Generation) -->
+    <!-- External Library: Three.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- SVG Filters for Advanced Glassmorphism and Gooey Effects -->
+    <!-- SVG Filters for Smooth Rendering -->
     <svg style="display: none; position: absolute; pointer-events: none; z-index: -9999;" xmlns="http://www.w3.org/2000/svg">
         <defs>
-            <filter id="goo">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
-                <feBlend in="SourceGraphic" in2="goo" />
-            </filter>
             <filter id="noise">
                 <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="3" stitchTiles="stitch"/>
                 <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 0.1 0" />
@@ -33,21 +28,17 @@
         </defs>
     </svg>
 
-    <!-- Global Noise Overlay for Premium Film Grain Texture -->
+    <!-- Global Noise Overlay -->
     <div class="noise-overlay"></div>
 
-    <!-- Canvas Layers -->
-    <canvas id="bg-canvas-ambient"></canvas> 
+    <!-- Canvas Layers (Background & 3D) -->
     <canvas id="bg-canvas-particles"></canvas> 
     <canvas id="three-canvas"></canvas> 
-
-    <!-- Procedural CSS Decor Layer -->
     <div id="css-decor-layer" class="parallax-layer"></div>
 
-    <!-- Audio Engine Container -->
-    <div id="audio-engine-wrapper" style="display: none; pointer-events: none;">
+    <!-- Audio Player (Hidden UI) -->
+    <div id="audio-engine-wrapper" style="display: none;">
         <audio id="bg-music" loop preload="auto">
-            <!-- PATH AUDIO -->
             <source src="assets/audio/lagu.mp3" type="audio/mpeg">
         </audio>
     </div>
@@ -68,7 +59,6 @@
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
             </button>
         </div>
-        <!-- Progress Bar -->
         <div class="island-progress-wrapper">
             <div class="island-progress-fill" id="music-progress"></div>
         </div>
@@ -78,7 +68,7 @@
         <!-- SCREEN 1: SECURITY PIN -->
         <section id="screen-pin" class="screen-layer active-screen" data-index="0">
             <div class="screen-content-wrapper">
-                <div class="glass-panel pin-auth-panel reveal-anim interactable-layer">
+                <div class="glass-panel pin-auth-panel">
                     <div class="auth-header">
                         <div class="lock-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -93,7 +83,7 @@
                     </div>
 
                     <div class="premium-keypad" id="numpad-container">
-                        <!-- Digenerate oleh JS -->
+                        <!-- Akan diisi otomatis oleh script.js -->
                     </div>
                 </div>
             </div>
@@ -102,7 +92,7 @@
         <!-- SCREEN 2: HEAVY LOADING SEQUENCE -->
         <section id="screen-loading" class="screen-layer" data-index="1">
             <div class="screen-content-wrapper">
-                <div class="loading-orchestrator interactable-layer">
+                <div class="loading-orchestrator">
                     <div class="spinner-premium">
                         <svg viewBox="0 0 100 100">
                             <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,105,180,0.2)" stroke-width="4"></circle>
@@ -122,7 +112,7 @@
         <!-- SCREEN 3: HOME DASHBOARD -->
         <section id="screen-home" class="screen-layer" data-index="2">
             <div class="screen-content-wrapper flex-top">
-                <div class="greeting-hero glass-panel parallax-el interactable-layer">
+                <div class="greeting-hero glass-panel">
                     <div class="badge-premium">09 Agustus 2012</div>
                     <h1 class="heading-hero text-gradient-pink">Selamat Ulang Tahun,<br><span class="name-highlight">Zahra</span></h1>
                     <p class="text-body-large">Hari ini semesta tersenyum lebih lebar karena merayakan hari kelahiranmu. Sebuah kebanggaan bisa mengenal dan menemanimu.</p>
@@ -137,13 +127,10 @@
                             <div class="clock-item"><span class="tz-label">WITA</span><span class="tz-time" id="tz-wita">--:--</span></div>
                             <div class="clock-item"><span class="tz-label">WIT</span><span class="tz-time" id="tz-wit">--:--</span></div>
                             <div class="clock-item"><span class="tz-label">UTC</span><span class="tz-time" id="tz-utc">--:--</span></div>
-                            <div class="clock-item"><span class="tz-label">GMT</span><span class="tz-time" id="tz-gmt">--:--</span></div>
                         </div>
                     </div>
                 </div>
-                <!-- Area Interaksi 3D -->
                 <div class="interaction-hint" id="hint-3d">
-                    <div class="touch-icon"></div>
                     <span>Sentuh Kucing & Kelinci untuk berinteraksi</span>
                 </div>
             </div>
@@ -151,42 +138,26 @@
 
         <!-- SCREEN 4: IMMERSIVE MEDIA GALLERY -->
         <section id="screen-media" class="screen-layer" data-index="3">
-            <div class="masonry-gallery-wrapper interactable-layer">
+            <div class="masonry-gallery-wrapper">
                 <div class="gallery-header glass-panel-small">
                     <h2 class="heading-secondary">Kenangan Virtual Kita</h2>
                 </div>
                 <div class="media-grid-premium" id="media-grid-container">
-                    <div class="media-card" style="--delay: 0.1s">
-                        <div class="media-inner"><video src="assets/videos/video1.mp4" autoplay loop muted playsinline class="media-object"></video></div>
-                    </div>
-                    <div class="media-card" style="--delay: 0.2s">
-                        <div class="media-inner"><img src="assets/images/foto1.jpg" alt="Memori 1" class="media-object"></div>
-                    </div>
-                    <div class="media-card" style="--delay: 0.3s">
-                        <div class="media-inner"><video src="assets/videos/video2.mp4" autoplay loop muted playsinline class="media-object"></video></div>
-                    </div>
-                    <div class="media-card" style="--delay: 0.4s">
-                        <div class="media-inner"><img src="assets/images/foto2.jpg" alt="Memori 2" class="media-object"></div>
-                    </div>
-                    <div class="media-card" style="--delay: 0.5s">
-                        <div class="media-inner"><video src="assets/videos/video3.mp4" autoplay loop muted playsinline class="media-object"></video></div>
-                    </div>
-                    <div class="media-card" style="--delay: 0.6s">
-                        <div class="media-inner"><img src="assets/images/foto3.jpg" alt="Memori 3" class="media-object"></div>
-                    </div>
-                    <div class="media-card" style="--delay: 0.7s">
-                        <div class="media-inner"><video src="assets/videos/video4.mp4" autoplay loop muted playsinline class="media-object"></video></div>
-                    </div>
-                    <div class="media-card" style="--delay: 0.8s">
-                        <div class="media-inner"><img src="assets/images/foto4.jpg" alt="Memori 4" class="media-object"></div>
-                    </div>
+                    <div class="media-card" style="--delay: 0.1s"><div class="media-inner"><video src="assets/videos/video1.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
+                    <div class="media-card" style="--delay: 0.2s"><div class="media-inner"><img src="assets/images/foto1.jpg" alt="Memori 1" class="media-object"></div></div>
+                    <div class="media-card" style="--delay: 0.3s"><div class="media-inner"><video src="assets/videos/video2.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
+                    <div class="media-card" style="--delay: 0.4s"><div class="media-inner"><img src="assets/images/foto2.jpg" alt="Memori 2" class="media-object"></div></div>
+                    <div class="media-card" style="--delay: 0.5s"><div class="media-inner"><video src="assets/videos/video3.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
+                    <div class="media-card" style="--delay: 0.6s"><div class="media-inner"><img src="assets/images/foto3.jpg" alt="Memori 3" class="media-object"></div></div>
+                    <div class="media-card" style="--delay: 0.7s"><div class="media-inner"><video src="assets/videos/video4.mp4" autoplay loop muted playsinline class="media-object"></video></div></div>
+                    <div class="media-card" style="--delay: 0.8s"><div class="media-inner"><img src="assets/images/foto4.jpg" alt="Memori 4" class="media-object"></div></div>
                 </div>
             </div>
         </section>
 
         <!-- SCREEN 5: ENDLESS ROMANTIC SCROLL -->
         <section id="screen-messages" class="screen-layer" data-index="4">
-            <div class="screen-content-wrapper interactable-layer">
+            <div class="screen-content-wrapper">
                 <div class="message-envelope-container" id="envelope-wrapper">
                     <div class="premium-envelope">
                         <div class="envelope-flap"></div>
@@ -203,9 +174,7 @@
                             <h2 class="heading-secondary">Pesan Dari Jauh</h2>
                             <div class="divider-ornate"></div>
                         </div>
-                        <div class="letter-scroll-area" id="romantic-quotes-container">
-                            <!-- Injeksi JS -->
-                        </div>
+                        <div class="letter-scroll-area" id="romantic-quotes-container"></div>
                         <div class="scroll-indicator">
                             <span>Scroll ke bawah</span>
                             <div class="arrow-down"></div>
@@ -217,10 +186,10 @@
 
         <!-- SCREEN 6: WISH & PARTICLE ENGINE -->
         <section id="screen-wish" class="screen-layer" data-index="5">
-            <div class="screen-content-wrapper interactable-layer">
+            <div class="screen-content-wrapper">
                 <div class="glass-panel wish-panel">
                     <h2 class="heading-secondary">Terbangkan Harapan</h2>
-                    <p class="text-body">Ketik doa dan harapanmu di sini. Saat kau mengirimkannya, sistem akan mengubah teksmu menjadi rasi bintang yang terbang ke langit virtual kita.</p>
+                    <p class="text-body">Ketik doa dan harapanmu di sini. Saat kau mengirimkannya, sistem akan mengubah teksmu menjadi rasi bintang.</p>
                     
                     <div class="input-group-premium">
                         <textarea id="wish-input" class="premium-textarea" placeholder="Aku berharap di usia ini..." rows="4"></textarea>
@@ -229,7 +198,6 @@
                     
                     <button id="send-wish-btn" class="btn-primary full-width">
                         <span class="btn-text">Kirim ke Semesta</span>
-                        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     </button>
                 </div>
             </div>
@@ -237,8 +205,7 @@
 
         <!-- SCREEN 7: THE SECRET REVEAL -->
         <section id="screen-secret" class="screen-layer" data-index="6">
-            <div class="screen-content-wrapper flex-center full-height interactable-layer">
-                <!-- Tahap 1: Garis Love Drawing -->
+            <div class="screen-content-wrapper flex-center full-height">
                 <div class="svg-drawing-container" id="love-drawing-container">
                     <svg class="giant-love-svg" viewBox="0 0 200 200">
                         <defs>
@@ -246,16 +213,11 @@
                                 <stop offset="0%" stop-color="#FF69B4" />
                                 <stop offset="100%" stop-color="#DDA0DD" />
                             </linearGradient>
-                            <filter id="glowLove" x="-20%" y="-20%" width="140%" height="140%">
-                                <feGaussianBlur stdDeviation="5" result="blur" />
-                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                            </filter>
                         </defs>
-                        <path id="giant-love-path" d="M 100,180 C 100,180 20,120 20,60 C 20,30 50,10 80,30 C 100,50 100,50 100,50 C 100,50 100,50 120,30 C 150,10 180,30 180,60 C 180,120 100,180 100,180 Z" stroke="url(#loveGrad)" stroke-width="4" fill="none" filter="url(#glowLove)"/>
+                        <path id="giant-love-path" d="M 100,180 C 100,180 20,120 20,60 C 20,30 50,10 80,30 C 100,50 100,50 100,50 C 100,50 100,50 120,30 C 150,10 180,30 180,60 C 180,120 100,180 100,180 Z" stroke="url(#loveGrad)" stroke-width="4" fill="none"/>
                     </svg>
                 </div>
 
-                <!-- Tahap 2: Kotak Rahasia -->
                 <div class="secret-box-wrapper hidden" id="secret-box-wrapper">
                     <div class="magic-box-3d" id="magic-box-btn">
                         <div class="box-lid"></div>
@@ -264,7 +226,6 @@
                     </div>
                 </div>
 
-                <!-- Tahap 3: Hadiah Utama -->
                 <div class="ultimate-gift-container glass-panel hidden" id="ultimate-gift-container">
                     <div class="gift-image-frame">
                         <img src="assets/images/hadiah-akhir.jpg" alt="Hadiah Spesial 16:9" class="gift-img-169">
@@ -273,29 +234,26 @@
                     <div class="gift-text-area">
                         <p class="exact-caption">"HAYYIEE CINTAAA, ini hadiah buat kamu! hadiah ini mungkin kecil dan ngga seberapa, tapi aku bener bener merayakan sekali ulang tahun kamu. selamat bertambah umur yaa cintaa, YUKKK, ambil hadiah nyaa!"</p>
                     </div>
-                    <a href="https://wa.me/6283815954022?text=AKU%20MAU%20SAYANGGG%20%3A3" target="_blank" class="btn-whatsapp glow-effect">
-                        <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                        Ambil Hadiah
-                    </a>
+                    <a href="https://wa.me/6283815954022?text=AKU%20MAU%20SAYANGGG%20%3A3" target="_blank" class="btn-whatsapp glow-effect">Ambil Hadiah</a>
                     <button id="reset-journey-btn" class="btn-text-only mt-4">Kembali ke Awal Ulang Tahun</button>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- DOCK NAVIGATION -->
-    <nav class="premium-dock glass-fx" id="main-dock">
+    <!-- DOCK NAVIGATION (HIDDEN BY DEFAULT) -->
+    <nav class="premium-dock glass-fx hidden-dock" id="main-dock">
         <ul class="dock-list">
             <li class="dock-item active" data-target="screen-home" tooltip="Home">
-                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></div>
+                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></div>
                 <div class="dock-dot"></div>
             </li>
             <li class="dock-item" data-target="screen-media" tooltip="Memori">
-                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg></div>
+                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle></svg></div>
                 <div class="dock-dot"></div>
             </li>
             <li class="dock-item" data-target="screen-messages" tooltip="Surat">
-                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg></div>
+                <div class="dock-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path></svg></div>
                 <div class="dock-dot"></div>
             </li>
             <li class="dock-item" data-target="screen-wish" tooltip="Harapan">
